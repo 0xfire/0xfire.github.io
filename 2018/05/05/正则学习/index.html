@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="学习爬虫的时候，想要从网页中找到特定的数据很麻烦，那么正则就很重要了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="正则学习">
+<meta property="og:url" content="https://0xfire.github.io/2018/05/05/%E6%AD%A3%E5%88%99%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="0xfire|专注网络安全">
+<meta property="og:description" content="学习爬虫的时候，想要从网页中找到特定的数据很麻烦，那么正则就很重要了。">
+<meta property="og:image" content="https://0xfire.github.io/2018/05/05/%E6%AD%A3%E5%88%99%E5%AD%A6%E4%B9%A0/1.jpg">
+<meta property="article:published_time" content="2018-05-04T16:40:37.000Z">
+<meta property="article:modified_time" content="2020-05-28T04:08:29.238Z">
+<meta property="article:author" content="0xfire">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://0xfire.github.io/2018/05/05/%E6%AD%A3%E5%88%99%E5%AD%A6%E4%B9%A0/1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://0xfire.github.io/2018/05/05/正则学习/"/>
+
+
+
+
+
+  <title>正则学习 | 0xfire|专注网络安全</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">0xfire|专注网络安全</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://0xfire.github.io/2018/05/05/%E6%AD%A3%E5%88%99%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="0xfire">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="0xfire|专注网络安全">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">正则学习</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-05T00:40:37+08:00">
+                2018-05-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>学习爬虫的时候，想要从网页中找到特定的数据很麻烦，那么正则就很重要了。</p>
+<a id="more"></a>
+
+<h3>1.正则表达式</h3>   
+>正则表达式是一个特殊的字符序列，它能帮助你方便的检查一个字符串是否与某种模式匹配。在python中有re模块提供正则表达式。
+
+<h3>2.正则表达式基础</h3>
+2.1子模式
+
+<blockquote>
+<p>\w&nbsp;&nbsp;:匹配任意字母，数字或者_<br>\d&nbsp;&nbsp;:匹配数字<br>\s&nbsp;&nbsp;:匹配空白字符<br>. &nbsp;&nbsp;&nbsp;:匹配任意字符</p>
+</blockquote>
+<p>2.2重复子模式</p>
+<blockquote>
+<p>\w+&nbsp;:表示匹配至少一个字母，数字或者_<br>\d*&nbsp;&nbsp;:表示匹配任意个数字，包括0<br>\w{3,8}:表示匹配3-8之间个字母，数字或_</p>
+</blockquote>
+<p>2.3 “或”运算: |</p>
+<blockquote>
+<p>(p|P)ython&nbsp;&nbsp;:可以匹配python，也可以匹配Python</p>
+</blockquote>
+<p>2.4 选择符：?</p>
+<blockquote>
+<p>(https://)?(www.)?(0xfire.com):<br>可以匹配 <a href="https://www.0xfire.com,也可以匹配www.0xfire.com,还可以匹配0xfire.com" target="_blank" rel="noopener">https://www.0xfire.com,也可以匹配www.0xfire.com,还可以匹配0xfire.com</a></p>
+</blockquote>
+<p>2.5 字符集：[]</p>
+<blockquote>
+<p>[a-zA-Z0-9_] : 等价于\w<br>[0-9a-zA-Z._] : 匹配数字、字母、. 和 _</p>
+</blockquote>
+<p>2.6 开始符和结尾符：^、$</p>
+<blockquote>
+<p>^\d&nbsp;:以数字开始<br>\w$&nbsp;:以字母结尾<br>^[a-zA-Z][0-9a-zA-Z_]*:匹配python的合法变量</p>
+</blockquote>
+<p>2.7 分组:()<br>2.7.1  捕获组 </p>
+<blockquote>
+<p>(^[0-9a-zA-Z]\w{5,17})@[0-9a-zA-Z]+.\w+ : 匹配邮箱用户名<br><img src="/2018/05/05/%E6%AD%A3%E5%88%99%E5%AD%A6%E4%B9%A0/1.jpg" alt="a"> </p>
+</blockquote>
+<p>2.7.2 非捕获组</p>
+<blockquote>
+<p>(^[0-9a-zA-Z]\w{5,17}@[0-9a-zA-Z]+.(?:net|com|top|cn))&nbsp;:&nbsp;捕获指定后缀名的邮箱用户名<br>（?:\d+.){3}\d&nbsp;:&nbsp;匹配IP</p>
+</blockquote>
+<h3>python中的re模块</h3>
+3.1   re.match函数
+>re.match 尝试从字符串的起始位置匹配一个模式，如果不是起始位置匹配成功的话，match()就返回none。
+>函数语法：re.match(pattern, string, flags=0)   
+
+<p>3.1.1   参数说明：</p>
+<blockquote>
+<p>pattern：匹配的正则表达式<br>string:要匹配的字符串<br>flags:标志位，用于控制正则表达式的匹配方式，如：是否区分大小写，多行匹配等等。</p>
+</blockquote>
+<p>3.1.2：<br>我们可以使用group(num) 或 groups() 匹配对象函数来获取匹配表达式。   </p>
+<blockquote>
+<p>匹配对象的方法：<br>group(num=0)：匹配的整个表达式的字符串，group() 可以一次输入多个组号，在这种情况下它将返回一个包含那些组所对应值的元组。<br>groups()：返回一个包含所有小组字符串的元组，从 1 到 所含的小组号。</p>
+</blockquote>
+<p>3.2   re.search函数</p>
+<blockquote>
+<p>re.search：扫描整个字符串并返回第一个成功的匹配。<br>函数语法：re.search(pattern, string, flags=0)</p>
+</blockquote>
+<p>3.3   re.match与re.search的区别</p>
+<blockquote>
+<p>re.match只匹配字符串的开始，如果字符串开始不符合正则表达式，则匹配失败，函数返回None；而re.search匹配整个字符串，直到找到一个匹配。</p>
+</blockquote>
+<p>3.4   检索和替换</p>
+<blockquote>
+<p>Python 的 re 模块提供了re.sub用于替换字符串中的匹配项。<br>语法：re.sub(pattern, repl, string, count=0, flags=0)</p>
+</blockquote>
+<p>3.4.1  参数说明</p>
+<blockquote>
+<p>pattern : 正则中的模式字符串。<br>repl : 替换的字符串，也可为一个函数。<br>string : 要被查找替换的原始字符串。<br>count : 模式匹配后替换的最大次数，默认 0 表示替换所有的匹配。</p>
+</blockquote>
+<p>3.5   re.compile函数</p>
+<blockquote>
+<p>compile 函数用于编译正则表达式，生成一个正则表达（ Pattern ）对象，供 match() 和 search() 这两个函数使用。<br>语法格式为：re.compile(pattern[, flags])</p>
+</blockquote>
+<p>3.5.1   参数说明</p>
+<blockquote>
+<p>pattern : 一个字符串形式的正则表达式<br>flags : 可选，表示匹配模式，比如忽略大小写，多行模式等，具体参数为：<br>1.re.I 忽略大小写<br>2.re.L 表示特殊字符集 \w, \W, \b, \B, \s, \S 依赖于当前环境<br>3.re.M 多行模式<br>4.re.S 即为 . 并且包括换行符在内的任意字符（. 不包括换行符）<br>5.re.U 表示特殊字符集 \w, \W, \b, \B, \d, \D, \s, \S 依赖于    Unicode 字符属性数据库<br>6.re.X 为了增加可读性，忽略空格和 # 后面的注释   </p>
+</blockquote>
+<p>3.6   re.findall</p>
+<blockquote>
+<p>在字符串中找到正则表达式所匹配的所有子串，并返回一个列表，如果没有找到匹配的，则返回空列表。<br>注意： match 和 search 是匹配一次 findall 匹配所有。<br>函数语法：findall(string, pos, endpos)</p>
+</blockquote>
+<p>3.6.1   参数说明</p>
+<blockquote>
+<p>string : 待匹配的字符串。<br>pos : 可选参数，指定字符串的起始位置，默认为 0。<br>endpos : 可选参数，指定字符串的结束位置，默认为字符串的长度。</p>
+</blockquote>
+<p>3.7   re.finditer</p>
+<blockquote>
+<p>和 findall 类似，在字符串中找到正则表达式所匹配的所有子串，并把它们作为一个迭代器返回。<br>函数语法：re.finditer(pattern, string, flags=0)   </p>
+</blockquote>
+<p>3.8   re.split</p>
+<blockquote>
+<p>split 方法按照能够匹配的子串将字符串分割后返回列表<br>函数语法：re.split(pattern, string[, maxsplit=0, flags=0])</p>
+</blockquote>
+<p>3.8.1  参数说明</p>
+<blockquote>
+<p>maxsplit：分隔次数，maxsplit=1 分隔一次，默认为 0，不限制次数。   </p>
+</blockquote>
+<h3>正则表达式对象</h3>
+4.1   re.RegexObject
+>re.compile() 返回 RegexObject 对象。
+
+<p>4.2   re.MatchObject </p>
+<blockquote>
+<p>group() 返回被 RE 匹配的字符串。<br>start() 返回匹配开始的位置<br>end() 返回匹配结束的位置<br>span() 返回一个元组包含匹配 (开始,结束) 的位置    </p>
+</blockquote>
+<h3>结语</h3>
+正则理解起来不算难，看的话效果不太大，实践出真理。
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/python/" rel="tag"># python</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/04/%E5%A6%82%E4%BD%95%E5%86%99hexo%E5%8D%9A%E5%AE%A2/" rel="prev" title="如何写一篇hexo博客">
+                如何写一篇hexo博客 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="0xfire" />
+          <p class="site-author-name" itemprop="name">0xfire</p>
+           
+              <p class="site-description motion-element" itemprop="description">为了心中仅存的一份执着而奋斗</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/0xfire" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://0xfireworks@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>
+                  
+                    
+                      E-Mail
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-block">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-link"></i>
+              友链
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://www.cdusec.com/" title="CDUSEC" target="_blank">CDUSEC</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#"><span class="nav-number">1.</span> <span class="nav-text">1.正则表达式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#"><span class="nav-number">2.</span> <span class="nav-text">2.正则表达式基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#"><span class="nav-number">3.</span> <span class="nav-text">python中的re模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#"><span class="nav-number">4.</span> <span class="nav-text">正则表达式对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#"><span class="nav-number">5.</span> <span class="nav-text">结语</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">0xfire</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next" target="_blank" rel="noopener">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
+</body>
+</html>
