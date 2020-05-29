@@ -107,20 +107,20 @@
 <meta property="og:url" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/index.html">
 <meta property="og:site_name" content="0xfire|专注网络安全">
 <meta property="og:description" content="Think Java本题花时间也比较多，复现的时候遇到的坑也比较多，以下是解题方法与细节理解。 0x01 源代码分析根据给的文件可以发现存在sql注入，dbName可控，此外在Test.class中发现了swagger，访问后发现开放了相关接口。 1234567891011121314151617181920212223242526272829303132333435363738394041424">
-<meta property="og:image" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/E:%5CHexo%5Csource_posts%5C%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp%5Clogin.png">
-<meta property="og:image" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/E:%5CHexo%5Csource_posts%5C%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp%5Cserialize.png">
-<meta property="og:image" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/E:%5CHexo%5Csource_posts%5C%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp%5Cysoserial.png">
-<meta property="og:image" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/E:%5CHexo%5Csource_posts%5C%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp%5CSendRequestToDS.png">
-<meta property="og:image" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/E:%5CHexo%5Csource_posts%5C%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp%5CserializePoc.png">
-<meta property="og:image" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/E:%5CHexo%5Csource_posts%5C%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp%5CserializeExp.png">
-<meta property="og:image" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/E:%5CHexo%5Csource_posts%5C%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp%5Cexp.png">
-<meta property="og:image" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/E:%5CHexo%5Csource_posts%5C%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp%5Cflag.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/login.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/serialize.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/ysoserial.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/SendRequestToDS.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/serializePoc.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/serializeExp.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/exp.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/flag.png">
 <meta property="article:published_time" content="2020-05-28T16:49:47.000Z">
-<meta property="article:modified_time" content="2020-05-29T07:00:49.816Z">
+<meta property="article:modified_time" content="2020-05-29T07:03:36.365Z">
 <meta property="article:author" content="0xfire">
 <meta property="article:tag" content="CTF">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/E:%5CHexo%5Csource_posts%5C%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp%5Clogin.png">
+<meta name="twitter:image" content="https://0xfire.github.io/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/login.png">
 
 
 
@@ -436,21 +436,21 @@
 <p><code>1&#39; union select user()#</code> 都被当做id的值，但是不影响数据库的连接，然后在下面执行sql语句的时候  <code>union select user()#</code> 都作为了sql语句执行，达成了sql注入。使用#同理。</p>
 <p>最终输入在swagger-ui.html的/common/test/sqlDict接口中输入<code>myapp#&#39; union select pwd from user#</code>获得密码为 admin@Rrrr_ctf_asde 。</p>
 <h4 id="0x03登录获取token"><a href="#0x03登录获取token" class="headerlink" title="0x03登录获取token"></a>0x03登录获取token</h4><p>在/common/user/login中登录获取到Bearer。</p>
-<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/E:%5CHexo%5Csource_posts%5C%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp%5Clogin.png" alt="1590733597113">Bearer是用户json数据序列化的结果，将Bearer后面的字符串base64decode的结果如下，明显的java序列化后的格式，这里就可能出现反序列化的漏洞，既然是登录用的，那么就在/common/user/current中应该会触发反序列化，那么在这个接口中的Authorization中输入这一串data，然后Try it out!抓包。</p>
-<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/E:%5CHexo%5Csource_posts%5C%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp%5Cserialize.png" alt="1590733804094"></p>
+<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/login.png" alt="1590733597113">Bearer是用户json数据序列化的结果，将Bearer后面的字符串base64decode的结果如下，明显的java序列化后的格式，这里就可能出现反序列化的漏洞，既然是登录用的，那么就在/common/user/current中应该会触发反序列化，那么在这个接口中的Authorization中输入这一串data，然后Try it out!抓包。</p>
+<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/serialize.png" alt="1590733804094"></p>
 <h4 id="0x04反序列化利用的环境配置"><a href="#0x04反序列化利用的环境配置" class="headerlink" title="0x04反序列化利用的环境配置"></a>0x04反序列化利用的环境配置</h4><p>先在burp中安装  Java Deserialization Scanner插件，该插件在burp的BApp Store可以找到。然后配置ysoserial，先上<a href="https://github.com/frohoff/ysoserial" target="_blank" rel="noopener">github</a>下载相关源代码，再使用 <code>mvn clean package -DskipTests</code> 进行编译，最后在burp中的 Java Deserialization Scanner插件下配置路径，例如：</p>
-<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/E:%5CHexo%5Csource_posts%5C%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp%5Cysoserial.png" alt="1590734238883"></p>
+<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/ysoserial.png" alt="1590734238883"></p>
 <h4 id="0x05反序列化利用-amp-amp-get-flag"><a href="#0x05反序列化利用-amp-amp-get-flag" class="headerlink" title="0x05反序列化利用&amp;&amp;get flag"></a>0x05反序列化利用&amp;&amp;get flag</h4><p>由于复现是在buuoj下复现的，靶机都处于内网环境，所以先开个小号去申请个内网服务器用来接收shell。</p>
 <p>在burp中，将抓到的包发送到装好的插件中</p>
-<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/E:%5CHexo%5Csource_posts%5C%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp%5CSendRequestToDS.png" alt="1590734455390"></p>
+<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/SendRequestToDS.png" alt="1590734455390"></p>
 <p>将Bearer后的字符串 Set Insertion Point，然后Attack(Base64)，在右边可以看到可利用的ROME。</p>
-<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/E:%5CHexo%5Csource_posts%5C%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp%5CserializePoc.png" alt="1590734607131"></p>
+<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/serializePoc.png" alt="1590734607131"></p>
 <p>将当前包发送到Exploiting</p>
-<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/E:%5CHexo%5Csource_posts%5C%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp%5CserializeExp.png" alt="1590734722286"></p>
+<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/serializeExp.png" alt="1590734722286"></p>
 <p>然后构造payload执行，ip端口为buuoj中申请的内网靶机的ip与监听的端口。</p>
-<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/E:%5CHexo%5Csource_posts%5C%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp%5Cexp.png" alt="1590734801498"></p>
+<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/exp.png" alt="1590734801498"></p>
 <p>最后成功接收到flag</p>
-<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/E:%5CHexo%5Csource_posts%5C%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp%5Cflag.png" alt="1590734861991"></p>
+<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/flag.png" alt="1590734861991"></p>
 
       
     </div>
