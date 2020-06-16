@@ -85,7 +85,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="hexo学习," />
+  <meta name="keywords" content="ctf," />
 
 
 
@@ -101,17 +101,25 @@
 
 
 
-<meta name="description" content="本文介绍如何使用Hexo写出一篇‘比较’好看的文章，几句简单的语法，喜欢简介的话，可能就刚好适用。">
+<meta name="description" content="0x00 前言最近在刷攻防世界的web题，遇到了好多个ssti的题，flask，Tornado等等，但是自己也没有好好总结过，只有之前CISCN的时候做某个题的时候大概弄懂了原理，也没有总结出payload总结等等，所以经过多个题的洗礼，来进行思考总结。 0x01 原理STTI就是服务器端模板注入(Server-Side Template Injection)，与sql注入，命令注入等等原理都差不">
 <meta property="og:type" content="article">
-<meta property="og:title" content="如何写一篇hexo博客">
-<meta property="og:url" content="https://0xfire.github.io/2018/09/04/%E5%A6%82%E4%BD%95%E5%86%99hexo%E5%8D%9A%E5%AE%A2/index.html">
+<meta property="og:title" content="SSTI学习">
+<meta property="og:url" content="https://0xfire.github.io/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/index.html">
 <meta property="og:site_name" content="0xfire|专注网络安全">
-<meta property="og:description" content="本文介绍如何使用Hexo写出一篇‘比较’好看的文章，几句简单的语法，喜欢简介的话，可能就刚好适用。">
-<meta property="article:published_time" content="2018-09-04T13:20:01.000Z">
-<meta property="article:modified_time" content="2020-05-29T07:00:49.813Z">
+<meta property="og:description" content="0x00 前言最近在刷攻防世界的web题，遇到了好多个ssti的题，flask，Tornado等等，但是自己也没有好好总结过，只有之前CISCN的时候做某个题的时候大概弄懂了原理，也没有总结出payload总结等等，所以经过多个题的洗礼，来进行思考总结。 0x01 原理STTI就是服务器端模板注入(Server-Side Template Injection)，与sql注入，命令注入等等原理都差不">
+<meta property="og:image" content="https://0xfire.github.io/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x02_%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E7%9A%84%E9%A1%BA%E5%BA%8F_test.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x02_dir.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x02_dir(__builtins__).png">
+<meta property="og:image" content="https://0xfire.github.io/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x02_import_builtins.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x03_find_popen.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x03_%E8%A1%A5%E5%85%85pyload%E8%A7%A3%E6%9E%90.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x03_%E8%A1%A5%E5%85%85_example.png">
+<meta property="article:published_time" content="2020-06-14T15:27:24.000Z">
+<meta property="article:modified_time" content="2020-06-16T09:27:45.860Z">
 <meta property="article:author" content="0xfire">
-<meta property="article:tag" content="hexo学习">
+<meta property="article:tag" content="ctf">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://0xfire.github.io/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x02_%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E7%9A%84%E9%A1%BA%E5%BA%8F_test.png">
 
 
 
@@ -140,13 +148,13 @@
 
 
 
-  <link rel="canonical" href="https://0xfire.github.io/2018/09/04/如何写hexo博客/"/>
+  <link rel="canonical" href="https://0xfire.github.io/2020/06/14/SSTI学习/"/>
 
 
 
 
 
-  <title>如何写一篇hexo博客 | 0xfire|专注网络安全</title>
+  <title>SSTI学习 | 0xfire|专注网络安全</title>
   
 
 
@@ -313,7 +321,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://0xfire.github.io/2018/09/04/%E5%A6%82%E4%BD%95%E5%86%99hexo%E5%8D%9A%E5%AE%A2/">
+    <link itemprop="mainEntityOfPage" href="https://0xfire.github.io/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="0xfire">
@@ -330,7 +338,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">如何写一篇hexo博客</h1>
+          <h1 class="post-title" itemprop="name headline">SSTI学习</h1>
         
 
         <div class="post-meta">
@@ -342,8 +350,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-04T21:20:01+08:00">
-                2018-09-04
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-14T23:27:24+08:00">
+                2020-06-14
               </time>
             
 
@@ -374,7 +382,7 @@
                   <span class="post-meta-item-text">字数统计</span>
                 
                 <span title="字数统计">
-                  176
+                  2.6k
                 </span>
               
 
@@ -390,7 +398,7 @@
                   <span class="post-meta-item-text">阅读时长</span>
                 
                 <span title="阅读时长">
-                  1
+                  9
                 </span>
               
             </div>
@@ -411,38 +419,97 @@
       
 
       
-        <p>本文介绍如何使用Hexo写出一篇‘比较’好看的文章，几句简单的语法，喜欢简介的话，可能就刚好适用。</p>
-<a id="more"></a>
-
-<hr>
-<h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3><blockquote>
-<p>这是一个引用,使用&gt;符号，置于文本前。(为方便阅读，下面的内容均使用了引用)</p>
-</blockquote>
-<hr>
-<h3 id="图片与链接"><a href="#图片与链接" class="headerlink" title="图片与链接"></a>图片与链接</h3><blockquote>
-<p>图片：！[](图片地址)</p>
-</blockquote>
+        <h3 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h3><p>最近在刷攻防世界的web题，遇到了好多个ssti的题，flask，Tornado等等，但是自己也没有好好总结过，只有之前CISCN的时候做某个题的时候大概弄懂了原理，也没有总结出payload总结等等，所以经过多个题的洗礼，来进行思考总结。</p>
+<h3 id="0x01-原理"><a href="#0x01-原理" class="headerlink" title="0x01 原理"></a>0x01 原理</h3><p>STTI就是服务器端模板注入(Server-Side Template Injection)，与sql注入，命令注入等等原理都差不多，都是执行了外部输入的代码，即将用户输入的数据，当作代码来执行了，成为了程序中的一部分。在Flask,Django以及Tornado中，都是MVT模式的三层架构，T就是指Template(模板技术)，Flask中常用的模板是jinja2， 模板中可以访问一些 Python 内置变量，jinja2中有三种语法：</p>
 <blockquote>
-<p>网址：[]()</p>
+<p>控制结构 &#123;% %&#125;</p>
+<p>变量取值 &#123;&#123; &#125;&#125;</p>
+<p>注释 &#123;#   #&#125;</p>
 </blockquote>
-<hr>
-<h3 id="粗体与斜体"><a href="#粗体与斜体" class="headerlink" title="粗体与斜体"></a>粗体与斜体</h3><blockquote>
-<p>粗体：用两个*包含一段文本就是粗体。    例：<strong>粗体</strong></p>
-</blockquote>
-<blockquote>
-<p>斜体：用一个*包含一段文本就是斜体</p>
-</blockquote>
-<hr>
-<h3 id="代码框"><a href="#代码框" class="headerlink" title="代码框"></a>代码框</h3><blockquote>
-<p>使用两个`把中间的代码包含起来，例如：</p>
-</blockquote>
-<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hello <span class="built_in">word</span>!</span><br></pre></td></tr></table></figure>
+<p>jinja2中使用&#123;&#123; &#125;&#125;语法来表示一个变量，当利用jinja2进行渲染的时候就会执行，jinja2也支持Python中的所有数据类型，例如基本数据类型，列表，字典，对象等。</p>
+<p>使用以下代码来进行简单测试(使用的环境是python3.7)：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> flask </span><br><span class="line"><span class="keyword">import</span> os </span><br><span class="line">app = flask.Flask(__name__) </span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/') </span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">()</span>:</span> </span><br><span class="line">  <span class="keyword">return</span> open(__file__).read() </span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/test/&lt;path:str&gt;') </span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">(str)</span>:</span></span><br><span class="line">  <span class="keyword">return</span> flask.render_template_string(str)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>: </span><br><span class="line">  app.run(debug=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
 
-<hr>
-<h3 id="分割线"><a href="#分割线" class="headerlink" title="分割线"></a>分割线</h3><blockquote>
-<p>分割线的语法只需要加三个-号或*(是不是发现一直再用分割线hhh<del>~</del>)</p>
+<p>启动后访问 <code>http://127.0.0.1/test/&amp;#123;&amp;#123; 1+1&amp;#125;&amp;#125;</code>可以发现页面显示了一个2，即&#123;&#123;1+1&#125;&#125;中的代码进行了执行。</p>
+<p>这段代码是一个典型的SSTI漏洞示例，漏洞成因在于：<code>render_template_string</code>函数在渲染模板的时候直接把输入的字符串进行了返回渲染，我们知道Flask 中使用了Jinja2 作为模板渲染引擎，&#123;&#123; &#125;&#125;在Jinja2中作为变量包裹标识符，Jinja2在渲染的时候会把&#123;&#123; &#125;&#125;包裹的内容当做变量解析替换。此时&#123;&#123;1+1&#125;&#125;会被解析成2。(我想起了jsp中使用el表达式也是这种差不多的语法，是否也能进行模板注入？)</p>
+<h3 id="0x02-扩展深入"><a href="#0x02-扩展深入" class="headerlink" title="0x02 扩展深入"></a>0x02 扩展深入</h3><h4 id="内建函数"><a href="#内建函数" class="headerlink" title="内建函数"></a>内建函数</h4><p>当我们在启用一个python解释器的时候，没有进行任何导包/创建变量/创建函数等等操作，还是有很多函数可以使用，这些函数叫做内建函数，这些函数在python解释器启动的时候就自动加载到内存中供我们使用。</p>
+<p>这里需要提到一个命名空间的东西，这个在其他编程语言中也有相关的东西。</p>
+<h4 id="名称空间"><a href="#名称空间" class="headerlink" title="名称空间"></a>名称空间</h4><p>官方文档的一段话： </p>
+<blockquote>
+<p> <em>A namespace is a mapping from names to objects.Most namespaces are currently implemented as Python dictionaries。</em> </p>
 </blockquote>
-<hr>
+<p>命名空间(Namespace)是从名称到对象的映射，大部分的命名空间都是通过 Python 字典来实现的。命名空间提供了在项目中避免名字冲突的一种方法。各个命名空间是独立的，没有任何关系的，所以一个命名空间中不能有重名，但不同的命名空间是可以重名而没有任何影响。</p>
+<p>一般有三种命名空间：</p>
+<blockquote>
+<p><strong>内置名称（built-in names</strong>）， Python 语言内置的名称，比如函数名 abs、char 和异常名称 BaseException、Exception 等等。<br><strong>全局名称（global names）</strong>，模块中定义的名称，记录了模块的变量，包括函数、类、其它导入的模块、模块级的变量和常量。<br><strong>局部名称（local names）</strong>，函数中定义的名称，记录了函数的变量，包括函数的参数和局部定义的变量。（类中定义的也是）</p>
+</blockquote>
+<h4 id="命名空间的”顺序”"><a href="#命名空间的”顺序”" class="headerlink" title="命名空间的”顺序”"></a>命名空间的”顺序”</h4><p><strong>查找顺序：</strong></p>
+<p>比如说我们要使用一个变量 test，则 Python 的查找顺序为：</p>
+<blockquote>
+<p>局部名称空间——&gt;全局名称空间—–&gt;内置名称空间</p>
+</blockquote>
+<p>如果找不到变量 runoob，它将放弃查找并引发一个 NameError 异常:</p>
+<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x02_%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E7%9A%84%E9%A1%BA%E5%BA%8F_test.png" alt="0x02_命名空间的顺序_test.png"></p>
+<p><strong>加载顺序：</strong></p>
+<p>这个想都不用想，开始说了python解释器启动时就会加载内置函数，那么加载顺序肯定是内置命名空间最先加载，跟查找顺序恰恰相反。</p>
+<blockquote>
+<p>局部名称空间——&gt;全局名称空间—–&gt;内置名称空间</p>
+</blockquote>
+<p>我们主要关注的是内建名称空间，是名字到内建对象的映射，在python中，初始的<strong>builtins</strong>模块提供内建名称空间到内建对象的映射。</p>
+<p>dir()函数用于查看一个对象的属性有哪些，在没有提供参数的时候，会将返回当前环境导入的所有模块进行返回，我们可以看初始模块有哪些</p>
+<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x02_dir.png" alt="0x02_dir.png"></p>
+<p>可以看到<strong>builtins</strong>是作为一个默认初始模块出现的，那么可以使用dir()查看<strong>builtins</strong>模块下的属性。</p>
+<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x02_dir(__builtins__).png" alt="0x02_dir(__builtins__).png"></p>
+<p>在这个里面我们可以看到很多熟悉的关键字，len，hash，hex，input等等，这也是解释了为什么我们不需要导入这些包就能使用这些函数，因为就是通过默认模块导入了。</p>
+<p>当然我们也能自己手动再导入，再调用其中的方法，如：</p>
+<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x02_import_builtins.png" alt="0x02_import_builtins.png"></p>
+<p>注：python3中__builtins__是引用的builtins模块，而python2中__builtins__是引用的__builtin__，所以python2中应该是<code>import __builtin__</code></p>
+<h4 id="类继承"><a href="#类继承" class="headerlink" title="类继承"></a>类继承</h4><p>说到类继承就想到了js中的原型链污染，都是一个继承链来的。</p>
+<p>python中对一个变量可以通过一些继承的方法，找到继承链，通常要用到以下方法</p>
+<blockquote>
+<p><strong>__class__</strong>： 万物皆对象，而class用于返回该对象所属的类，比如某个字符串，他的对象为字符串对象，而其所属的类为<code>&lt;class &#39;str&#39;&gt;</code></p>
+<p><strong>__base__</strong> ：对象的一个基类，一般情况下是object，有时不是，这时需要使用下一个方法。</p>
+<p><strong>__base__</strong> ：以元组的形式返回一个类所直接继承的类。 </p>
+<p><strong>__mro__</strong> ：同样可以获取对象的基类，只是这时会显示出整个继承链的关系(继承树)，是一个列表，object在最底层，即在列表中的最后，通过<strong>__mro__[-1]</strong>可以获取到。</p>
+<p><strong>__subclasses__()</strong> ：继承此对象的子类，返回一个列表。</p>
+<p> <strong>__init__</strong>：所有自带类都包含__init__方法。 </p>
+</blockquote>
+<p>有这些类继承的方法，我们就可以从任何一个变量，回溯到基类中去，再获得到此基类所有实现的类，就可以获得到各种“危险”类，然后调用类中的危险方法进行命令执行。</p>
+<h4 id="魔术函数"><a href="#魔术函数" class="headerlink" title="魔术函数"></a>魔术函数</h4><p>这里介绍几个常见的函数，有助于后续的理解</p>
+<blockquote>
+<p><strong>__dict__：</strong>类的静态函数、类函数、普通函数、全局变量以及一些内置的属性都是放在类的__dict__ 属性中的。每个类有自己的<strong>__dict__</strong>属性，就算存在继承关系，父类的__dict__ 并不会影响子类的__dict__ 对象也有自己的__dict__ 属性</p>
+<p><strong>__globals__：</strong>function.__globals__该属性是函数特有的属性，用于获取function所处空间下可使用的模块、方法以及所有变量。记录当前文件全局变量的值,如果某个文件调用了os、sys等库,但我们只能访问该文件某个函数或者某个对象，那么我们就可以利用__globals__属性访问全局的变量。该属性保存的是函数全局变量的字典引用。</p>
+<p><strong>__getattribute__()：</strong>实例、类、函数都具有的__getattribute__魔术方法。事实上，在实例化的对象进行<code>.</code>操作的时候（形如：<code>a.xxx/a.xxx()</code>），都会自动去调用__getattribute__方法。因此我们同样可以直接通过这个方法来获取到实例、类、函数的属性。</p>
+</blockquote>
+<h3 id="0x03-构造payload"><a href="#0x03-构造payload" class="headerlink" title="0x03 构造payload"></a>0x03 构造payload</h3><p>利用上面讲到的类继承的思想，可以总结出一个利用流程：</p>
+<blockquote>
+<p>从一个变量开始-&gt;获得对象-&gt;获得基类-&gt;获得子类-&gt;遍历子类-&gt;子类中寻找可以利用的类</p>
+</blockquote>
+<p>或者说：</p>
+<blockquote>
+<p>任意找一个内置类对象，通过__class__获取到它对应的类</p>
+<p>通过__base__获取到基类<code>&lt;class &#39;object&#39;&gt;</code></p>
+<p>通过__subclasses__()获取到基类的所有子类</p>
+<p>在子类中寻找可以利用的类</p>
+<p>例如：””.__class__.__base__.__subclasses__()   ——python3</p>
+</blockquote>
+<h4 id="寻找可以利用的类"><a href="#寻找可以利用的类" class="headerlink" title="寻找可以利用的类"></a>寻找可以利用的类</h4><p>例如我们要寻找可以使用popen的类</p>
+<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#Anaconda自带的python3.7.3</span></span><br><span class="line">aim = <span class="string">"popen"</span></span><br><span class="line">order = -<span class="number">1</span></span><br><span class="line"><span class="keyword">for</span> i <span class="built_in">in</span> <span class="string">""</span>.<span class="variable">__class__</span>.<span class="variable">__bases__</span>[<span class="number">0</span>].<span class="variable">__subclasses__</span>():</span><br><span class="line">    order+=<span class="number">1</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">if</span> aim <span class="built_in">in</span> i.<span class="variable">__init__</span>.<span class="variable">__globals__</span>.keys():</span><br><span class="line">            print(i,order)</span><br><span class="line">    except:</span><br><span class="line">        pass</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x03_find_popen.png" alt="0x03_find_popen.png"></p>
+<p>然后就可以进行命令执行：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">"".<span class="strong">__class__</span>.<span class="strong">__bases__</span>[<span class="string">-1</span>].<span class="strong">__subclasses__</span>()[<span class="string">128</span>].<span class="strong">__init__</span>.<span class="strong">__globals__</span>[<span class="string">'popen'</span>](<span class="link">'whoami'</span>).read()</span><br></pre></td></tr></table></figure>
+
+<h4 id="payload解析："><a href="#payload解析：" class="headerlink" title="payload解析："></a>payload解析：</h4><p>python中万物皆对象，前面学习类继承的时候提到可以回溯到基类中，例如上面payload中，使用一个空字符串调用__class__获取到是属于字符串类，而__bases[-1]__是获取到继承链的最后一个类(即基类)<code>&lt;class &#39;object&#39;&gt;</code>，__subclasses__()获取基类的所有子类，返回了一个列表，[128]取到了<code>&lt;class &#39;os._wrap_close&#39;&gt;</code>这个类。我在学习这个payload的时候不懂为什么要调用__init__，自己写了一个例子就发现了问题所在。</p>
+<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x03_%E8%A1%A5%E5%85%85pyload%E8%A7%A3%E6%9E%90.png" alt="0x03_补充pyload解析.png"></p>
+<p>噢原来只是找到这个函数呀，我开始以为是调用了__init__()函数，这里只是个函数指针罢了。让我们再看一下__globals__的作用：</p>
+<blockquote>
+<p>用于获取function所处空间下可使用的模块、方法以及所有变量。</p>
+</blockquote>
+<p>__init__是每个类都有的函数，那么通过__init__调用__globals__就得到了这个类中的各种模块，方法跟变量(字典格式)，如果有popen函数的话，就可以通过__init__.__globals__[‘popen’]来获取到popen的函数指针了，接下来的就是执行命令就不再赘述了。关于__init__的理解我还写了一个小例子，如下：</p>
+<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x03_%E8%A1%A5%E5%85%85_example.png" alt="0x03_补充_example.png"></p>
+<p>可以看到通过调用__init__.__globals__获取到的模块跟通过dir()获取到的相同，包括导入的os模块也在其中。</p>
+<h3 id="0x04-payload总结"><a href="#0x04-payload总结" class="headerlink" title="0x04 payload总结"></a>0x04 payload总结</h3><p>啊这里就不总结了，思路就是那样子，本文基于python3来的，2有一些区别，思路都差不多。</p>
 
       
     </div>
@@ -489,7 +556,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/hexo%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-google"></i> hexo学习</a>
+            <a href="/tags/ctf/" rel="tag"><i class="fa fa-google"></i> ctf</a>
           
         </div>
       
@@ -502,8 +569,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/05/05/%E6%AD%A3%E5%88%99%E5%AD%A6%E4%B9%A0/" rel="next" title="正则学习">
-                <i class="fa fa-chevron-left"></i> 正则学习
+              <a href="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/" rel="next" title="网鼎杯-朱雀组-Web复现wp">
+                <i class="fa fa-chevron-left"></i> 网鼎杯-朱雀组-Web复现wp
               </a>
             
           </div>
@@ -511,10 +578,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/10/22/DOM-BOM/" rel="prev" title="DOM,BOM">
-                DOM,BOM <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -700,7 +763,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#引用"><span class="nav-text">引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#图片与链接"><span class="nav-text">图片与链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#粗体与斜体"><span class="nav-text">粗体与斜体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码框"><span class="nav-text">代码框</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分割线"><span class="nav-text">分割线</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x00-前言"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-原理"><span class="nav-text">0x01 原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-扩展深入"><span class="nav-text">0x02 扩展深入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#内建函数"><span class="nav-text">内建函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#名称空间"><span class="nav-text">名称空间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#命名空间的”顺序”"><span class="nav-text">命名空间的”顺序”</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#类继承"><span class="nav-text">类继承</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#魔术函数"><span class="nav-text">魔术函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x03-构造payload"><span class="nav-text">0x03 构造payload</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#寻找可以利用的类"><span class="nav-text">寻找可以利用的类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#payload解析："><span class="nav-text">payload解析：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x04-payload总结"><span class="nav-text">0x04 payload总结</span></a></li></ol></div>
             
 
           </div>
