@@ -115,7 +115,7 @@
 <meta property="og:image" content="https://0xfire.github.io/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x03_%E8%A1%A5%E5%85%85pyload%E8%A7%A3%E6%9E%90.png">
 <meta property="og:image" content="https://0xfire.github.io/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x03_%E8%A1%A5%E5%85%85_example.png">
 <meta property="article:published_time" content="2020-06-14T15:27:24.000Z">
-<meta property="article:modified_time" content="2020-07-03T08:59:49.043Z">
+<meta property="article:modified_time" content="2020-07-10T08:18:54.873Z">
 <meta property="article:author" content="0xfire">
 <meta property="article:tag" content="ctf">
 <meta name="twitter:card" content="summary">
@@ -446,7 +446,7 @@
 <blockquote>
 <p>局部名称空间——&gt;全局名称空间—–&gt;内置名称空间</p>
 </blockquote>
-<p>如果找不到变量 runoob，它将放弃查找并引发一个 NameError 异常:</p>
+<p>如果找不到变量 test，它将放弃查找并引发一个 NameError 异常:</p>
 <p><img src="/2020/06/14/SSTI%E5%AD%A6%E4%B9%A0/0x02_%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E7%9A%84%E9%A1%BA%E5%BA%8F_test.png" alt="0x02_命名空间的顺序_test.png"></p>
 <p><strong>加载顺序：</strong></p>
 <p>这个想都不用想，开始说了python解释器启动时就会加载内置函数，那么加载顺序肯定是内置命名空间最先加载，跟查找顺序恰恰相反。</p>
