@@ -104,19 +104,19 @@
 <meta name="description" content="前言一切都是自己的理解，其中可能有各种错误，仅供参考。 easyphp12345678910111213141516&#x2F;&#x2F;题目环境：php:7.4.8-apache$pid &#x3D; pcntl_fork();if ($pid &#x3D;&#x3D; -1) &amp;#123;  die(&#39;could not fork&#39;);&amp;#125;else if ($pid)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ciscn-2020-web">
-<meta property="og:url" content="https://0xfire.github.io/2020/08/20/ciscn-2020-web/index.html">
+<meta property="og:url" content="https://0xfire.github.io/2020/08/21/ciscn-2020-web/index.html">
 <meta property="og:site_name" content="0xfire|专注网络安全">
 <meta property="og:description" content="前言一切都是自己的理解，其中可能有各种错误，仅供参考。 easyphp12345678910111213141516&#x2F;&#x2F;题目环境：php:7.4.8-apache$pid &#x3D; pcntl_fork();if ($pid &#x3D;&#x3D; -1) &amp;#123;  die(&#39;could not fork&#39;);&amp;#125;else if ($pid)">
-<meta property="og:image" content="https://0xfire.github.io/2020/08/20/ciscn-2020-web/easyphp0x01.png">
-<meta property="og:image" content="https://0xfire.github.io/2020/08/20/ciscn-2020-web/easyphp0x02.png">
-<meta property="og:image" content="https://0xfire.github.io/2020/08/20/ciscn-2020-web/littlegame0x01.png">
-<meta property="og:image" content="https://0xfire.github.io/2020/08/20/ciscn-2020-web/littlegame0x02.png">
-<meta property="article:published_time" content="2020-08-20T12:06:10.000Z">
-<meta property="article:modified_time" content="2020-08-21T10:06:10.541Z">
+<meta property="og:image" content="https://0xfire.github.io/2020/08/21/ciscn-2020-web/easyphp0x01.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/08/21/ciscn-2020-web/easyphp0x02.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/08/21/ciscn-2020-web/littlegame0x01.png">
+<meta property="og:image" content="https://0xfire.github.io/2020/08/21/ciscn-2020-web/littlegame0x02.png">
+<meta property="article:published_time" content="2020-08-21T01:06:10.000Z">
+<meta property="article:modified_time" content="2020-08-21T10:06:56.322Z">
 <meta property="article:author" content="0xfire">
 <meta property="article:tag" content="CTF">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://0xfire.github.io/2020/08/20/ciscn-2020-web/easyphp0x01.png">
+<meta name="twitter:image" content="https://0xfire.github.io/2020/08/21/ciscn-2020-web/easyphp0x01.png">
 
 
 
@@ -145,7 +145,7 @@
 
 
 
-  <link rel="canonical" href="https://0xfire.github.io/2020/08/20/ciscn-2020-web/"/>
+  <link rel="canonical" href="https://0xfire.github.io/2020/08/21/ciscn-2020-web/"/>
 
 
 
@@ -318,7 +318,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://0xfire.github.io/2020/08/20/ciscn-2020-web/">
+    <link itemprop="mainEntityOfPage" href="https://0xfire.github.io/2020/08/21/ciscn-2020-web/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="0xfire">
@@ -347,8 +347,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-20T20:06:10+08:00">
-                2020-08-20
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-08-21T09:06:10+08:00">
+                2020-08-21
               </time>
             
 
@@ -420,9 +420,9 @@
 <h3 id="easyphp"><a href="#easyphp" class="headerlink" title="easyphp"></a>easyphp</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;题目环境：php:7.4.8-apache</span><br><span class="line">$pid &#x3D; pcntl_fork();</span><br><span class="line">if ($pid &#x3D;&#x3D; -1) &#123;</span><br><span class="line">  die(&#39;could not fork&#39;);</span><br><span class="line">&#125;else if ($pid)&#123;</span><br><span class="line">  $r&#x3D;pcntl_wait($status);</span><br><span class="line">  if(!pcntl_wifexited($status))&#123;</span><br><span class="line">    phpinfo();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;else&#123;</span><br><span class="line">  highlight_file(__FILE__);</span><br><span class="line">  if(isset($_GET[&#39;a&#39;])&amp;&amp;is_string($_GET[&#39;a&#39;])&amp;&amp;!preg_match(&quot;&#x2F;[:\\\\]|exec|pcntl&#x2F;i&quot;,$_GET[&#39;a&#39;]))&#123;</span><br><span class="line">    call_user_func_array($_GET[&#39;a&#39;],[$_GET[&#39;b&#39;],false,true]);</span><br><span class="line">  &#125;</span><br><span class="line">  posix_kill(posix_getpid(), SIGUSR1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这个题给出了一个php的版本：7.4.8，可能是考这个版本的某个漏洞，就去翻阅php7.4.9的修复，找到了一个东西</p>
-<p><img src="/2020/08/20/ciscn-2020-web/easyphp0x01.png" alt="1597925484829"></p>
+<p><img src="/2020/08/21/ciscn-2020-web/easyphp0x01.png" alt="1597925484829"></p>
 <p>但是经过自己测试，感觉并没有什么用，首先我们访问这个网页是由子进程返回的，如果需要利用就还需要创建一个进程，再利用这个新的子进程进行利用。而主进程中有个phpinfo()，想着怎么才能看子进程，经过查阅发现pcntl_wait的作用，那么我们执行以下这个函数就能够回到主进程，进而调用了phpinfo()。</p>
-<p><img src="/2020/08/20/ciscn-2020-web/easyphp0x02.png" alt="1597925708703"></p>
+<p><img src="/2020/08/21/ciscn-2020-web/easyphp0x02.png" alt="1597925708703"></p>
 <p>payload如下：</p>
 <blockquote>
 <p><a href="http://eci-2ze9505q64pi4jbaggsb.cloudeci1.ichunqiu.com/?a=call_user_func&amp;b=pcntl_wait" target="_blank" rel="noopener">http://eci-2ze9505q64pi4jbaggsb.cloudeci1.ichunqiu.com/?a=call_user_func&amp;b=pcntl_wait</a></p>
@@ -451,8 +451,8 @@
 <figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">router.post(<span class="string">"/DeveloperControlPanel"</span>, <span class="keyword">function</span> (req, res, next) &#123;</span><br><span class="line">    <span class="comment">// not implement</span></span><br><span class="line">    <span class="keyword">if</span> (req.body.key<span class="operator"> === </span>undefined<span class="operator"> || </span>req.body.password<span class="operator"> === </span>undefined)&#123;</span><br><span class="line">        res.send(<span class="string">"What's your problem?"</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> key = req.body.key.<span class="keyword">to</span><span class="constructor">String()</span>;</span><br><span class="line">        <span class="keyword">let</span> password = req.body.password.<span class="keyword">to</span><span class="constructor">String()</span>;</span><br><span class="line">        <span class="keyword">if</span>(Admin<span class="literal">[<span class="identifier">key</span>]</span><span class="operator"> === </span>password)&#123;</span><br><span class="line">            res.send(process.env.flag);</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            res.send(<span class="string">"Wrong password!Are you Admin?"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br><span class="line">router.post(<span class="string">"/Privilege"</span>, <span class="keyword">function</span> (req, res, next) &#123;</span><br><span class="line">    <span class="comment">// Why not ask witch for help?</span></span><br><span class="line">    <span class="keyword">if</span>(req.session.knight<span class="operator"> === </span>undefined)&#123;</span><br><span class="line">        res.redirect('/SpawnPoint');</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (req.body.NewAttributeKey<span class="operator"> === </span>undefined<span class="operator"> || </span>req.body.NewAttributeValue<span class="operator"> === </span>undefined) &#123;</span><br><span class="line">            res.send(<span class="string">"What's your problem?"</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> key = req.body.<span class="module-access"><span class="module"><span class="identifier">NewAttributeKey</span>.</span></span><span class="keyword">to</span><span class="constructor">String()</span>;</span><br><span class="line">            <span class="keyword">let</span> value = req.body.<span class="module-access"><span class="module"><span class="identifier">NewAttributeValue</span>.</span></span><span class="keyword">to</span><span class="constructor">String()</span>;</span><br><span class="line">            set<span class="constructor">Fn(<span class="params">req</span>.<span class="params">session</span>.<span class="params">knight</span>, <span class="params">key</span>, <span class="params">value</span>)</span>;</span><br><span class="line">            res.send(<span class="string">"Let's have a check!"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 
 <p>在DeveloperControlPanel方法中，如果是admin就能够看到flag了，而Privilege中可以修改key跟value，使用参考链接中的poc进行测试，过程如下：</p>
-<p><img src="/2020/08/20/ciscn-2020-web/littlegame0x01.png" alt="1597927612812"></p>
-<p><img src="/2020/08/20/ciscn-2020-web/littlegame0x02.png" alt="1597927669535"></p>
+<p><img src="/2020/08/21/ciscn-2020-web/littlegame0x01.png" alt="1597927612812"></p>
+<p><img src="/2020/08/21/ciscn-2020-web/littlegame0x02.png" alt="1597927669535"></p>
 <h3 id="easytrick"><a href="#easytrick" class="headerlink" title="easytrick"></a>easytrick</h3><p>代码如下：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="php"><span class="meta">&lt;?php</span></span></span><br><span class="line"><span class="php"><span class="class"><span class="keyword">class</span> <span class="title">trick</span></span>&#123;</span></span><br><span class="line"><span class="php">    <span class="keyword">public</span> $trick1;</span></span><br><span class="line"><span class="php">    <span class="keyword">public</span> $trick2;</span></span><br><span class="line"><span class="php">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span></span>&#123;</span></span><br><span class="line"><span class="php">        <span class="keyword">$this</span>-&gt;trick1 = (string)<span class="keyword">$this</span>-&gt;trick1;</span></span><br><span class="line"><span class="php">        <span class="keyword">if</span>(strlen(<span class="keyword">$this</span>-&gt;trick1) &gt; <span class="number">5</span> || strlen(<span class="keyword">$this</span>-&gt;trick2) &gt; <span class="number">5</span>)&#123;</span></span><br><span class="line"><span class="php">            <span class="keyword">die</span>(<span class="string">"你太长了"</span>);</span></span><br><span class="line"><span class="php">        &#125;</span></span><br><span class="line"><span class="php">        <span class="keyword">if</span>(<span class="keyword">$this</span>-&gt;trick1 !== <span class="keyword">$this</span>-&gt;trick2 &amp;&amp; md5(<span class="keyword">$this</span>-&gt;trick1) === md5(<span class="keyword">$this</span>-&gt;trick2) &amp;&amp; <span class="keyword">$this</span>-&gt;trick1 != <span class="keyword">$this</span>-&gt;trick2)&#123;</span></span><br><span class="line"><span class="php">            <span class="keyword">echo</span> file_get_contents(<span class="string">"/flag"</span>);</span></span><br><span class="line"><span class="php">        &#125;</span></span><br><span class="line"><span class="php">    &#125;</span></span><br><span class="line"><span class="php">&#125;</span></span><br><span class="line"><span class="php">highlight_file(<span class="keyword">__FILE__</span>);</span></span><br><span class="line"><span class="php">unserialize($_GET[<span class="string">'trick'</span>]);</span></span><br></pre></td></tr></table></figure>
 
