@@ -261,34 +261,6 @@
       </tags>
   </entry>
   <entry>
-    <title>cdusec-ctf Crypto wp</title>
-    <url>/2018/11/18/cdusec-ctf-Crypto-wp/</url>
-    <content><![CDATA[<p>校赛Crypto的wp，这些题都比较简单吧，大多都能查得到，只是一些简单古典密码以及常见编码。</p>
-<a id="more"></a>
-
-<h3 id="1、签到"><a href="#1、签到" class="headerlink" title="1、签到"></a>1、签到</h3><p>复制输入即可，我给了一个链接，没有认真去看的23333 吃亏。</p>
-<h3 id="2、凯撒"><a href="#2、凯撒" class="headerlink" title="2、凯撒"></a>2、凯撒</h3><p>简单的凯撒加密，key为4，在线工具丢进去即可。</p>
-<h3 id="3、fuck！这是什么鬼"><a href="#3、fuck！这是什么鬼" class="headerlink" title="3、fuck！这是什么鬼"></a>3、fuck！这是什么鬼</h3><p>jsfuck,说到底也是js代码，一样能够像js一样执行，复制丢进浏览器的控制台就得flag。</p>
-<h3 id="4、不一样的morse"><a href="#4、不一样的morse" class="headerlink" title="4、不一样的morse"></a>4、不一样的morse</h3><p>morse的中文编码xmorse，在线网站丢进去完事。</p>
-<h3 id="5、你熟悉键盘吗？"><a href="#5、你熟悉键盘吗？" class="headerlink" title="5、你熟悉键盘吗？"></a>5、你熟悉键盘吗？</h3><p>一共5组字符串，一个字符串代表一个字母，在键盘上比划一下可以得到ANgLA。</p>
-<h3 id="6、蕾蕾姐被表白了"><a href="#6、蕾蕾姐被表白了" class="headerlink" title="6、蕾蕾姐被表白了"></a>6、蕾蕾姐被表白了</h3><p>手机的9键拼音输入法加密，每2个数字对应一个字符，例如33，表示第三个键，第三个字符，即f，其他一样然后解出flag。</p>
-<h3 id="7、奇怪的字符串"><a href="#7、奇怪的字符串" class="headerlink" title="7、奇怪的字符串"></a>7、奇怪的字符串</h3><p>Y对应1，N对应0，全部替换后二进制转字符串。</p>
-<h3 id="8、the-other-base’s-member"><a href="#8、the-other-base’s-member" class="headerlink" title="8、the other base’s member"></a>8、the other base’s member</h3><p>base58，在线网站解码即可。</p>
-<h3 id="9、easy-base-family"><a href="#9、easy-base-family" class="headerlink" title="9、easy_base_family"></a>9、easy_base_family</h3><p>base16，32，64混合编码，解码脚本：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">f=open(<span class="string">'base_family.txt'</span>,<span class="string">'r'</span>)</span><br><span class="line">flag=f.read()</span><br><span class="line">f.close()</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        flag=base64.b16decode(flag)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        flag=base64.b32decode(flag)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        flag=base64.b64decode(flag)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">print(flag)</span><br></pre></td></tr></table></figure>
-<h3 id="10、蕾蕾姐的id"><a href="#10、蕾蕾姐的id" class="headerlink" title="10、蕾蕾姐的id"></a>10、蕾蕾姐的id</h3><p>md5爆破，会有多解的情况，只有一个正确。解密脚本：</p>
-<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line">import hashlib</span><br><span class="line">import sys</span><br><span class="line">keyword1=<span class="string">"41d"</span><span class="comment">#后三位</span></span><br><span class="line">keyword2=<span class="string">"fdc"</span><span class="comment">#2-5位</span></span><br><span class="line">key=[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>,<span class="string">'e'</span>,<span class="string">'f'</span>,<span class="string">'g'</span>,<span class="string">'h'</span>,<span class="string">'i'</span>,<span class="string">'j'</span>,<span class="string">'k'</span>,<span class="string">'l'</span>,<span class="string">'m'</span>,<span class="string">'n'</span>,<span class="string">'o'</span>,<span class="string">'p'</span>,<span class="string">'q'</span>,<span class="string">'r'</span>,<span class="string">'s'</span>,<span class="string">'t'</span>,<span class="string">'u'</span>,<span class="string">'v'</span>,<span class="string">'w'</span>,<span class="string">'x'</span>,<span class="string">'y'</span>,<span class="string">'z'</span>,<span class="string">'0'</span>,<span class="string">'1'</span>,<span class="string">'2'</span>,<span class="string">'3'</span>,<span class="string">'4'</span>,<span class="string">'5'</span>,<span class="string">'6'</span>,<span class="string">'7'</span>,<span class="string">'8'</span>,<span class="string">'9'</span>]</span><br><span class="line"><span class="keyword">for</span> a <span class="keyword">in</span> key:</span><br><span class="line">	<span class="keyword">for</span> b <span class="keyword">in</span> key:</span><br><span class="line">		<span class="keyword">for</span> c <span class="keyword">in</span> key:</span><br><span class="line">			<span class="keyword">for</span> d <span class="keyword">in</span> key:</span><br><span class="line">				word=str(a)+str(b)+str(c)+str(d)</span><br><span class="line">				flag=hashlib.md5(word)</span><br><span class="line">				<span class="keyword">if</span> flag.hexdigest()[-<span class="number">3</span>:]==keyword1 and flag.hexdigest()[<span class="number">2</span>:<span class="number">5</span>]==keyword2:</span><br><span class="line">					print flag.hexdigest()</span><br><span class="line">					sys.<span class="keyword">exit</span>(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="11、棋局"><a href="#11、棋局" class="headerlink" title="11、棋局"></a>11、棋局</h3><p>简单的棋盘加密，可以发现密文只有5个字母，urtql,附件的提示说flag的内容长度为10,想到棋盘加密。<br>解密脚本:   </p>
-<figure class="highlight vim"><table><tr><td class="code"><pre><span class="line">import itertools</span><br><span class="line"></span><br><span class="line">key = []</span><br><span class="line">cipher = <span class="string">"rquutrqqrtulrutuuurr"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i in itertools.permutations(<span class="string">'tqlur'</span>, <span class="number">5</span>):</span><br><span class="line">    key.<span class="keyword">append</span>(<span class="string">''</span>.<span class="keyword">join</span>(i))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> now_key in key:</span><br><span class="line">    solve_c = <span class="string">""</span></span><br><span class="line">    <span class="keyword">res</span> = <span class="string">""</span></span><br><span class="line">    <span class="keyword">for</span> now_c in cipher:</span><br><span class="line">        solve_c += str(now_key.<span class="built_in">index</span>(now_c))</span><br><span class="line">    <span class="keyword">for</span> i in <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(solve_c),<span class="number">2</span>):</span><br><span class="line">        now_ascii = <span class="keyword">int</span>(solve_c[i])*<span class="number">5</span>+<span class="keyword">int</span>(solve_c[i+<span class="number">1</span>])+<span class="number">97</span></span><br><span class="line">        <span class="keyword">if</span> now_ascii&gt;ord(<span class="string">'i'</span>):</span><br><span class="line">            now_ascii+=<span class="number">1</span></span><br><span class="line">        <span class="keyword">res</span> += chr(now_ascii)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">"flag"</span> in re<span class="variable">s:</span></span><br><span class="line">        <span class="keyword">print</span> now_key,<span class="keyword">res</span></span><br></pre></td></tr></table></figure>
-
-<p>觉得这个难？全都在这里：<a href="https://ctf-wiki.github.io/ctf-wiki/crypto/classical/polyalphabetic/" target="_blank" rel="noopener">点击查看</a><br>关于棋盘加密的知识，以及本题的解密脚本都在里面。</p>
-]]></content>
-      <tags>
-        <tag>ctf</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ciscn-2020-web</title>
     <url>/2020/08/21/ciscn-2020-web/</url>
     <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>一切都是自己的理解，其中可能有各种错误，仅供参考。</p>
@@ -339,46 +311,6 @@
 ]]></content>
       <tags>
         <tag>ctf</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>如何写一篇hexo博客</title>
-    <url>/2018/09/04/%E5%A6%82%E4%BD%95%E5%86%99hexo%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<p>本文介绍如何使用Hexo写出一篇‘比较’好看的文章，几句简单的语法，喜欢简介的话，可能就刚好适用。</p>
-<a id="more"></a>
-
-<hr>
-<h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3><blockquote>
-<p>这是一个引用,使用&gt;符号，置于文本前。(为方便阅读，下面的内容均使用了引用)</p>
-</blockquote>
-<hr>
-<h3 id="图片与链接"><a href="#图片与链接" class="headerlink" title="图片与链接"></a>图片与链接</h3><blockquote>
-<p>图片：！[](图片地址)</p>
-</blockquote>
-<blockquote>
-<p>网址：[]()</p>
-</blockquote>
-<hr>
-<h3 id="粗体与斜体"><a href="#粗体与斜体" class="headerlink" title="粗体与斜体"></a>粗体与斜体</h3><blockquote>
-<p>粗体：用两个*包含一段文本就是粗体。    例：<strong>粗体</strong></p>
-</blockquote>
-<blockquote>
-<p>斜体：用一个*包含一段文本就是斜体</p>
-</blockquote>
-<hr>
-<h3 id="代码框"><a href="#代码框" class="headerlink" title="代码框"></a>代码框</h3><blockquote>
-<p>使用两个`把中间的代码包含起来，例如：</p>
-</blockquote>
-<figure class="highlight applescript"><table><tr><td class="code"><pre><span class="line">hello <span class="built_in">word</span>!</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="分割线"><a href="#分割线" class="headerlink" title="分割线"></a>分割线</h3><blockquote>
-<p>分割线的语法只需要加三个-号或*(是不是发现一直再用分割线hhh<del>~</del>)</p>
-</blockquote>
-<hr>
-]]></content>
-      <tags>
-        <tag>hexo学习</tag>
       </tags>
   </entry>
   <entry>
@@ -443,6 +375,74 @@
 ]]></content>
       <tags>
         <tag>web FE</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>如何写一篇hexo博客</title>
+    <url>/2018/09/04/%E5%A6%82%E4%BD%95%E5%86%99hexo%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<p>本文介绍如何使用Hexo写出一篇‘比较’好看的文章，几句简单的语法，喜欢简介的话，可能就刚好适用。</p>
+<a id="more"></a>
+
+<hr>
+<h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3><blockquote>
+<p>这是一个引用,使用&gt;符号，置于文本前。(为方便阅读，下面的内容均使用了引用)</p>
+</blockquote>
+<hr>
+<h3 id="图片与链接"><a href="#图片与链接" class="headerlink" title="图片与链接"></a>图片与链接</h3><blockquote>
+<p>图片：！[](图片地址)</p>
+</blockquote>
+<blockquote>
+<p>网址：[]()</p>
+</blockquote>
+<hr>
+<h3 id="粗体与斜体"><a href="#粗体与斜体" class="headerlink" title="粗体与斜体"></a>粗体与斜体</h3><blockquote>
+<p>粗体：用两个*包含一段文本就是粗体。    例：<strong>粗体</strong></p>
+</blockquote>
+<blockquote>
+<p>斜体：用一个*包含一段文本就是斜体</p>
+</blockquote>
+<hr>
+<h3 id="代码框"><a href="#代码框" class="headerlink" title="代码框"></a>代码框</h3><blockquote>
+<p>使用两个`把中间的代码包含起来，例如：</p>
+</blockquote>
+<figure class="highlight applescript"><table><tr><td class="code"><pre><span class="line">hello <span class="built_in">word</span>!</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="分割线"><a href="#分割线" class="headerlink" title="分割线"></a>分割线</h3><blockquote>
+<p>分割线的语法只需要加三个-号或*(是不是发现一直再用分割线hhh<del>~</del>)</p>
+</blockquote>
+<hr>
+]]></content>
+      <tags>
+        <tag>hexo学习</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>cdusec-ctf Crypto wp</title>
+    <url>/2018/11/18/cdusec-ctf-Crypto-wp/</url>
+    <content><![CDATA[<p>校赛Crypto的wp，这些题都比较简单吧，大多都能查得到，只是一些简单古典密码以及常见编码。</p>
+<a id="more"></a>
+
+<h3 id="1、签到"><a href="#1、签到" class="headerlink" title="1、签到"></a>1、签到</h3><p>复制输入即可，我给了一个链接，没有认真去看的23333 吃亏。</p>
+<h3 id="2、凯撒"><a href="#2、凯撒" class="headerlink" title="2、凯撒"></a>2、凯撒</h3><p>简单的凯撒加密，key为4，在线工具丢进去即可。</p>
+<h3 id="3、fuck！这是什么鬼"><a href="#3、fuck！这是什么鬼" class="headerlink" title="3、fuck！这是什么鬼"></a>3、fuck！这是什么鬼</h3><p>jsfuck,说到底也是js代码，一样能够像js一样执行，复制丢进浏览器的控制台就得flag。</p>
+<h3 id="4、不一样的morse"><a href="#4、不一样的morse" class="headerlink" title="4、不一样的morse"></a>4、不一样的morse</h3><p>morse的中文编码xmorse，在线网站丢进去完事。</p>
+<h3 id="5、你熟悉键盘吗？"><a href="#5、你熟悉键盘吗？" class="headerlink" title="5、你熟悉键盘吗？"></a>5、你熟悉键盘吗？</h3><p>一共5组字符串，一个字符串代表一个字母，在键盘上比划一下可以得到ANgLA。</p>
+<h3 id="6、蕾蕾姐被表白了"><a href="#6、蕾蕾姐被表白了" class="headerlink" title="6、蕾蕾姐被表白了"></a>6、蕾蕾姐被表白了</h3><p>手机的9键拼音输入法加密，每2个数字对应一个字符，例如33，表示第三个键，第三个字符，即f，其他一样然后解出flag。</p>
+<h3 id="7、奇怪的字符串"><a href="#7、奇怪的字符串" class="headerlink" title="7、奇怪的字符串"></a>7、奇怪的字符串</h3><p>Y对应1，N对应0，全部替换后二进制转字符串。</p>
+<h3 id="8、the-other-base’s-member"><a href="#8、the-other-base’s-member" class="headerlink" title="8、the other base’s member"></a>8、the other base’s member</h3><p>base58，在线网站解码即可。</p>
+<h3 id="9、easy-base-family"><a href="#9、easy-base-family" class="headerlink" title="9、easy_base_family"></a>9、easy_base_family</h3><p>base16，32，64混合编码，解码脚本：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line">f=open(<span class="string">'base_family.txt'</span>,<span class="string">'r'</span>)</span><br><span class="line">flag=f.read()</span><br><span class="line">f.close()</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        flag=base64.b16decode(flag)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        flag=base64.b32decode(flag)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        flag=base64.b64decode(flag)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">print(flag)</span><br></pre></td></tr></table></figure>
+<h3 id="10、蕾蕾姐的id"><a href="#10、蕾蕾姐的id" class="headerlink" title="10、蕾蕾姐的id"></a>10、蕾蕾姐的id</h3><p>md5爆破，会有多解的情况，只有一个正确。解密脚本：</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line"><span class="comment">#coding:utf-8</span></span><br><span class="line">import hashlib</span><br><span class="line">import sys</span><br><span class="line">keyword1=<span class="string">"41d"</span><span class="comment">#后三位</span></span><br><span class="line">keyword2=<span class="string">"fdc"</span><span class="comment">#2-5位</span></span><br><span class="line">key=[<span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>,<span class="string">'e'</span>,<span class="string">'f'</span>,<span class="string">'g'</span>,<span class="string">'h'</span>,<span class="string">'i'</span>,<span class="string">'j'</span>,<span class="string">'k'</span>,<span class="string">'l'</span>,<span class="string">'m'</span>,<span class="string">'n'</span>,<span class="string">'o'</span>,<span class="string">'p'</span>,<span class="string">'q'</span>,<span class="string">'r'</span>,<span class="string">'s'</span>,<span class="string">'t'</span>,<span class="string">'u'</span>,<span class="string">'v'</span>,<span class="string">'w'</span>,<span class="string">'x'</span>,<span class="string">'y'</span>,<span class="string">'z'</span>,<span class="string">'0'</span>,<span class="string">'1'</span>,<span class="string">'2'</span>,<span class="string">'3'</span>,<span class="string">'4'</span>,<span class="string">'5'</span>,<span class="string">'6'</span>,<span class="string">'7'</span>,<span class="string">'8'</span>,<span class="string">'9'</span>]</span><br><span class="line"><span class="keyword">for</span> a <span class="keyword">in</span> key:</span><br><span class="line">	<span class="keyword">for</span> b <span class="keyword">in</span> key:</span><br><span class="line">		<span class="keyword">for</span> c <span class="keyword">in</span> key:</span><br><span class="line">			<span class="keyword">for</span> d <span class="keyword">in</span> key:</span><br><span class="line">				word=str(a)+str(b)+str(c)+str(d)</span><br><span class="line">				flag=hashlib.md5(word)</span><br><span class="line">				<span class="keyword">if</span> flag.hexdigest()[-<span class="number">3</span>:]==keyword1 and flag.hexdigest()[<span class="number">2</span>:<span class="number">5</span>]==keyword2:</span><br><span class="line">					print flag.hexdigest()</span><br><span class="line">					sys.<span class="keyword">exit</span>(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="11、棋局"><a href="#11、棋局" class="headerlink" title="11、棋局"></a>11、棋局</h3><p>简单的棋盘加密，可以发现密文只有5个字母，urtql,附件的提示说flag的内容长度为10,想到棋盘加密。<br>解密脚本:   </p>
+<figure class="highlight vim"><table><tr><td class="code"><pre><span class="line">import itertools</span><br><span class="line"></span><br><span class="line">key = []</span><br><span class="line">cipher = <span class="string">"rquutrqqrtulrutuuurr"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i in itertools.permutations(<span class="string">'tqlur'</span>, <span class="number">5</span>):</span><br><span class="line">    key.<span class="keyword">append</span>(<span class="string">''</span>.<span class="keyword">join</span>(i))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> now_key in key:</span><br><span class="line">    solve_c = <span class="string">""</span></span><br><span class="line">    <span class="keyword">res</span> = <span class="string">""</span></span><br><span class="line">    <span class="keyword">for</span> now_c in cipher:</span><br><span class="line">        solve_c += str(now_key.<span class="built_in">index</span>(now_c))</span><br><span class="line">    <span class="keyword">for</span> i in <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(solve_c),<span class="number">2</span>):</span><br><span class="line">        now_ascii = <span class="keyword">int</span>(solve_c[i])*<span class="number">5</span>+<span class="keyword">int</span>(solve_c[i+<span class="number">1</span>])+<span class="number">97</span></span><br><span class="line">        <span class="keyword">if</span> now_ascii&gt;ord(<span class="string">'i'</span>):</span><br><span class="line">            now_ascii+=<span class="number">1</span></span><br><span class="line">        <span class="keyword">res</span> += chr(now_ascii)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">"flag"</span> in re<span class="variable">s:</span></span><br><span class="line">        <span class="keyword">print</span> now_key,<span class="keyword">res</span></span><br></pre></td></tr></table></figure>
+
+<p>觉得这个难？全都在这里：<a href="https://ctf-wiki.github.io/ctf-wiki/crypto/classical/polyalphabetic/" target="_blank" rel="noopener">点击查看</a><br>关于棋盘加密的知识，以及本题的解密脚本都在里面。</p>
+]]></content>
+      <tags>
+        <tag>ctf</tag>
       </tags>
   </entry>
   <entry>
